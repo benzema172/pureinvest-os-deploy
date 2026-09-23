@@ -1,0 +1,44 @@
+{
+  "name": "pureinvest-os",
+  "version": "1.9.24",
+  "dependencies": {
+    "mammoth": "1.12.0",
+    "pdf-parse": "1.1.4"
+  },
+  "engines": {
+    "node": ">=20 <25"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test:payment-period": "node tests/payment-period-logic.test.js",
+    "test:logic-audit": "node tests/static-logic-audit.test.js",
+    "test:security": "node tests/security-guards.test.js",
+    "test:tenant-history": "node tests/tenant-history.test.js",
+    "test:settlement": "node tests/settlement-regression.test.js && node tests/server-settlement.test.js",
+    "test:final-security": "node tests/final-security-model.test.js",
+    "test:session-scope": "node tests/session-scope.test.js",
+    "test:single-login": "node tests/single-login-handoff.test.js",
+    "test:massive": "node tests/massive-simulation.audit.js",
+    "test:demo-manager": "node tests/demo-manager-account.test.js",
+    "test:demo-tenant": "node tests/demo-tenant-account.test.js",
+    "test:tenant-ui-layout": "node tests/tenant-ui-layout.test.js",
+    "test:platform-admin": "node tests/platform-admin-rebind.test.js",
+    "test": "npm run test:payment-period && npm run test:settlement && npm run test:logic-audit && npm run test:security && npm run test:platform-admin && npm run test:demo-manager && npm run test:demo-tenant && npm run test:tenant-ui-layout && npm run test:final-security && npm run test:session-scope && npm run test:single-login && npm run test:tenant-history && npm run test:expenses-component && npm run test:arrears-breakdown && npm run test:fee-breakdowns && npm run test:fee-meter-bridge && npm run test:tenant-fee-refresh && npm run test:tenant-period-media && npm run test:fee-report-publish-integration && npm run test:fee-active-property && npm run test:finance-dashboard && npm run test:fee-accordion-ui && npm run test:finance-unification-v1923 && npm run test:transactions-compact-v1922 && npm run test:build-v1923 && npm run test:startup-hotfix-v1924",
+    "test:expenses-component": "node tests/expenses-component-compatibility.test.js",
+    "test:arrears-breakdown": "node tests/arrears-breakdown-regression.test.js",
+    "test:fee-breakdowns": "node tests/fee-breakdowns.test.js",
+    "test:fee-meter-bridge": "node tests/fee-meter-bridge.test.js",
+    "test:tenant-fee-refresh": "node tests/tenant-fee-report-refresh.test.js",
+    "test:tenant-period-media": "node tests/tenant-period-media-regression.test.js",
+    "test:fee-report-publish-integration": "node tests/fee-report-publish-integration.test.js",
+    "test:fee-active-property": "node tests/fee-active-property.test.js",
+    "preview:local": "node tests/local-preview-server.js",
+    "build": "node build-netlify.mjs",
+    "test:finance-dashboard": "node tests/finance-dashboard-logic.test.js",
+    "test:fee-accordion-ui": "node tests/fee-accordion-ui.test.js",
+    "test:finance-unification-v1923": "node tests/finance-unification-v1923.test.js",
+    "test:transactions-compact-v1922": "node tests/transactions-compact-v1922.test.js",
+    "test:build-v1923": "node tests/build-v1923.test.js",
+    "test:startup-hotfix-v1924": "node tests/startup-hotfix-v1924.test.js"
+  }
+}

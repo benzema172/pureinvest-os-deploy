@@ -1,0 +1,31 @@
+{
+  "name": "PureInvest OS 1.9.24",
+  "short_name": "PureInvest OS",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "description": "Zarządzanie najmem, finansami, dokumentami i rozliczeniami nieruchomości.",
+  "background_color": "#f4f1ec",
+  "theme_color": "#121212",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

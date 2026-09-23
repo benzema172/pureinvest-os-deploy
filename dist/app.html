@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PureInvest OS</title>
+<meta name="robots" content="noindex,nofollow,noarchive" />
+<script>
+(()=>{const build='2026-09-23-startup-hotfix-v1924',key='piReleaseBootstrap';try{if(localStorage.getItem(key)===build)return;localStorage.setItem(key,build);if(!('caches' in window))return;caches.keys().then(keys=>{const old=keys.filter(name=>name.startsWith('pureinvest-'));return Promise.all(old.map(name=>caches.delete(name))).then(()=>{if(old.length)location.reload();});}).catch(()=>null);}catch(_){}})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8" integrity="sha384-z2hqtpr/vSDZ8zSjLOiNgnR/mpU799AD93s6rvkNJLI6Hl0YlKXEhDtREzNT749S" crossorigin="anonymous">
+
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/app.css?v=2026-09-23-startup-hotfix-v1924">
+<link rel="stylesheet" href="css/client-readiness.css?v=2026-09-23-startup-hotfix-v1924">
+<meta name="theme-color" content="#121212">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+  <link rel="stylesheet" href="assets/css/pi-transactions-compact-1.9.22.css" data-pi-patch="1.9.22-transactions">
+</head>
+
+<body class="tab-dashboard-active pi-client-ready">
+<div id="loginScreen" class="login-screen">
+
+  <div class="pure-video-login-bg" aria-hidden="true">
+    <video class="pure-login-video" autoplay muted loop playsinline preload="metadata" >
+    </video>
+    <div class="pure-login-video-overlay"></div>
+    <div class="pure-login-video-grid"></div>
+  </div>
+
+  <div class="pure-cinema-bg" aria-hidden="true">
+    <div class="pure-skyline skyline-a"></div>
+    <div class="pure-skyline skyline-b"></div>
+    <div class="pure-light light-a"></div>
+    <div class="pure-light light-b"></div>
+    <div class="pure-light light-c"></div>
+    <div class="pure-data-grid"></div>
+    <div class="pure-camera-fog"></div>
+
+    <div class="pure-orbit orbit-a"></div>
+    <div class="pure-orbit orbit-b"></div>
+    <div class="pure-orbit orbit-c"></div>
+    <div class="pure-particles particles-a"></div>
+    <div class="pure-particles particles-b"></div>
+    <div class="pure-radar"></div>
+    <div class="pure-market-lines"></div>
+    <div class="pure-window-rain"></div>
+
+  </div>
+
+  <div class="login-left">
+    <div class="brand">Pure<span>Invest</span></div>
+    <div class="hero-title">Centrum dowodzenia<br><span>Twoim najmem.</span></div>
+    <div class="hero-sub">Logowanie do panelu zarządcy, właściciela i trybu gościa.</div>
+  </div>
+  <div class="login-right">
+    <div class="login-card">
+      <h2>Logowanie</h2>
+      <input id="email" type="text" placeholder="Email / telefon / login">
+      <input id="password" type="password" placeholder="Hasło">
+      <button id="loginBtn" type="button">Zaloguj</button>
+      <div id="authMsg" class="auth-msg"></div>
+    </div>
+  </div>
+</div>
+
+<div id="welcomeScreen" class="welcome hidden">
+  <div class="welcome-top">
+    <div class="logo">Pure<span>Invest</span></div>
+    <div style="display:flex;gap:10px;align-items:center"><button id="installAppBtn" onclick="installPWA()" class="dark" style="max-width:180px;display:none">Zainstaluj aplikację</button><button onclick="logout()" class="dark" style="max-width:160px">Wyloguj</button></div>
+  </div>
+  <div class="welcome-title">Twój portfel nieruchomości</div>
+  <div class="welcome-sub">Wybierz mieszkanie i przejdź do panelu zarządzania. Dodawanie nowej nieruchomości znajdziesz na dole strony.</div>
+<div id="propertyTiles" class="tile-grid">Ładowanie mieszkań...</div>
+
+<div class="tile-grid">
+  <div class="tile tile-add-property" onclick="openAddPropertyModal()">
+    
+    <h3>Dodaj nowe mieszkanie</h3>
+    <small>➕ Nowy lokal w portfelu</small>
+    <div class="status">Dodaj teraz</div>
+    
+  </div>
+
+  </div>
+
+<div id="addPropertyModal" class="property-modal hidden">
+    <div class="property-modal-backdrop" onclick="closeAddPropertyModal()"></div>
+    <div class="property-modal-card">
+      <div class="property-modal-head">
+        <div>
+          <div class="card-title">Dodaj nowe mieszkanie</div>
+          <p>Uzupełnij podstawowe dane lokalu.</p>
+        </div>
+        <button type="button" class="property-modal-close" onclick="closeAddPropertyModal()">×</button>
+      </div>
+
+      <div class="form-row">
+        <input id="newPropertyName" placeholder="Nazwa mieszkania">
+        <input id="newPropertyAddress" placeholder="Adres">
+      </div>
+      <div class="form-row">
+        <input id="newPropertyArea" type="number" min="0" step="0.01" placeholder="Metraż mieszkania (m²)">
+        <input id="newPropertyPostalHint" placeholder="Kod pocztowy / miejscowość (opcjonalnie)">
+      </div>
+      <div class="form-row">
+        <input id="newTenantName" placeholder="Najemca">
+        <input id="newRentAmount" type="number" placeholder="Miesięczny najem">
+      </div>
+      <div class="form-row">
+        <input id="newPaymentAccount" placeholder="Numer konta do wpłat">
+        <input id="newPaymentAccountLabel" placeholder="Nazwa odbiorcy / opis przelewu, opcjonalnie">
+      </div>
+
+      
+<div class="form-row">
+  <input id="newOwnerRent" type="number" placeholder="Najem dla właściciela">
+  <input id="newCommunityRent" type="number" placeholder="Czynsz do wspólnoty">
+</div>
+
+<div class="form-row">
+  <input id="newElectricityExpected" type="number" placeholder="Prąd">
+  <input id="newGasExpected" type="number" placeholder="Gaz">
+</div>
+
+<div class="form-row">
+  <input id="newWaterExpected" type="number" placeholder="Woda">
+  <input id="newRentDueDay" type="number" placeholder="Dzień płatności (1-31)">
+</div>
+
+<div class="property-modal-actions">
+        <button type="button" class="dark" onclick="closeAddPropertyModal()">Anuluj</button>
+        <button type="button" onclick="addProperty()">Dodaj mieszkanie</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="wiktorekAssistant">
+    <div class="wiktorek-bubble">
+      <div class="wiktorek-bubble-head">
+        <div>
+          <div class="wiktorek-bubble-title">AIos'</div>
+          <div class="wiktorek-bubble-sub">Asystent PureInvest</div>
+        </div>
+        <button type="button" class="wiktorek-close" onclick="toggleWiktorekAssistant(false)">×</button>
+      </div>
+
+      <div class="wiktorek-message" style="display:none!important">
+        <b id="wiktorekMainTitle"></b>
+        <span id="wiktorekMainText"></span>
+      </div>
+
+      <div id="wiktorekInsights" class="wiktorek-insights"></div>
+
+
+      
+
+      <div class="wiktorek-mini-grid">
+        <div class="wiktorek-mini"><b id="wiktorekLate">0</b><span>Zaległe</span></div>
+        <div class="wiktorek-mini"><b id="wiktorekWarn">0</b><span>Kontrola</span></div>
+        <div class="wiktorek-mini"><b id="wiktorekOk">0</b><span>OK</span></div>
+      </div>
+
+    </div>
+
+    
+
+    <div class="wiktorek-avatar" onclick="toggleWiktorekAssistant()">
+      <div class="wiktorek-antenna"></div>
+      <div id="wiktorekStatusDot" class="wiktorek-status-dot"></div>
+      <div id="wiktorekCount" class="wiktorek-count">0</div>
+      <div class="wiktorek-face"></div>
+    </div>
+  </div>
+
+<div id="appScreen" class="dashboard hidden">
+  <div id="mobileOverlay" class="mobile-overlay" onclick="closeMobileDrawer()"></div>
+  <div class="sidebar" id="appSidebar">
+    <div class="sidebar-logo">Pure<span>Invest</span></div>
+    <div class="nav">
+      <div class="nav-item active" onclick="switchTab('dashboard', this);closeMobileDrawer()">Panel dowodzenia</div>
+      <div class="nav-item" onclick="switchTab('properties', this);closeMobileDrawer()">Nieruchomości</div>
+      <div class="nav-item" onclick="switchTab('transactions', this);closeMobileDrawer()">Finanse</div>
+      <div class="nav-item" onclick="switchTab('access', this);closeMobileDrawer()">Dostępy i najem</div>
+      <div class="nav-item" onclick="switchTab('tickets', this);closeMobileDrawer()">Zgłoszenia</div>
+      <div class="nav-item" onclick="switchTab('documents', this);closeMobileDrawer()">Biblioteka</div>
+      <div class="nav-item" onclick="switchTab('reports', this);closeMobileDrawer()">Raporty</div>
+      <div class="nav-item" onclick="switchTab('diagnostics', this);closeMobileDrawer()">Diagnostyka</div>
+    </div>
+    <button onclick="logout()" class="logout-dark">Wyloguj</button>
+  </div>
+
+  <div class="main">
+
+      <div class="command-hero dashboard-only">
+        <div class="command-panel">
+          <div class="command-eyebrow">PureInvest OS</div>
+          
+          <div class="command-title">Centrum dowodzenia najmem</div>
+          <div class="command-sub">Alerty, wynik miesiąca, aktywność i szybkie decyzje w jednym miejscu.</div>
+        </div>
+      </div>
+
+      
+
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="dashboardTitle">Dashboard</div>
+        <div class="page-sub" id="dashboardTenant">Zarządzanie najmem, finansami i obsługą lokalu</div>
+      </div>
+      <button onclick="backToWelcome()" class="back-btn">← Mieszkania</button>
+    </div>
+
+    <div class="quickbar dashboard-only">
+      <div class="quick" id="paymentAlert">Status płatności: —</div>
+      <div class="quick" id="tenantStatusBox">Status najmu: —</div>
+      <div class="quick" id="quickRentInfo">Czynsz: —</div>
+    </div>
+
+    <section id="tab-dashboard" class="tab-view active">
+      <div id="tenantArrearsPanel" class="card pi-arrears-panel hidden"></div>
+      <div id="commandAlerts" class="command-alerts"></div>
+
+          <div class="pi-admin-tabs pi-unified-tabs pi-command-admin-toggles">
+            <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardCostCollapse', this)">Dodaj koszt</button>
+            <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardOcrCollapse', this)">OCR PRO</button>
+            <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardPaymentCollapse', this)">Dodaj wpłatę</button>
+            <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardLatestCollapse', this)">Ostatnie transakcje</button>
+            <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardFiltersCollapse', this, 'filters')">Filtry i sortowanie</button>
+          </div>
+
+          <div id="piDashboardFiltersCollapse" class="filters dashboard-only pi-command-collapse pi-admin-subtab">
+            <select id="monthFilter" onchange="refreshDashboard()"><option value="all">Wszystkie miesiące</option></select>
+            <select id="yearFilter" onchange="refreshDashboard()"><option value="all">Wszystkie lata</option></select>
+            <select id="historyTypeFilter" onchange="refreshDashboard()">
+              <option value="all">Wszystkie transakcje</option>
+              <option value="income">Tylko wpłaty</option>
+              <option value="expense">Tylko koszty</option>
+            </select>
+            <select id="historyCategoryFilter" onchange="refreshDashboard()"><option value="all">Wszystkie kategorie</option></select>
+          </div>
+
+          <div id="piDashboardCostCollapse" class="pi-command-collapse pi-admin-subtab">
+            <div class="card triple-card">
+              <div class="card-title">Dodaj koszt</div><p class="pi-card-hint">Rodzaj kosztu, kwota i data. Załącznik jest opcjonalny.</p>
+              <select id="costCategory" aria-label="Rodzaj kosztu">
+                <option>Prąd</option>
+                <option>Woda</option>
+                <option>Gaz</option>
+                <option>Czynsz</option>
+                <option>Remont</option>
+              </select>
+              <div class="triple-inline">
+                <input type="number" id="costAmount" placeholder="Kwota" aria-label="Kwota kosztu (zł)">
+                <input type="date" id="costDate" aria-label="Data kosztu">
+              </div>
+              <textarea id="costNote" placeholder="Notatka" aria-label="Opis kosztu"></textarea>
+              <input type="file" id="costAttachment" accept="image/*,.pdf" aria-label="Załącznik do kosztu">
+              <button onclick="addCost()">Dodaj koszt</button>
+            </div>
+          </div>
+
+          <div id="piDashboardOcrCollapse" class="pi-command-collapse pi-admin-subtab">
+            <div class="card triple-card triple-ocr-card">
+              <div class="card-title">OCR PRO</div>
+              <div id="ocrDropzone" class="ocr-dropzone">
+                <div>📄</div>
+                <b>Przeciągnij dokumenty tutaj</b>
+                <input type="file" id="ocrInvoiceFile" accept="image/*,.pdf,.doc,.docx" multiple>
+              </div>
+              <button type="button" onclick="runInvoiceOCRPro()">Uruchom OCR PRO 3.0</button>
+              <div class="ocr-pro3-status-pill">AUTO-KSIĘGOWANIE 3.0</div>
+              <div id="ocrPro3Summary" class="ocr-pro3-mini-summary hidden"></div>
+              <div id="ocrStatus" class="ocr-status"></div>
+              <div id="ocrPreview" class="ocr-preview hidden"></div>
+              <div id="ocrEngineLog" class="ocr-engine-log"></div>
+            </div>
+          </div>
+
+          <div id="piDashboardPaymentCollapse" class="pi-command-collapse pi-admin-subtab">
+            <div class="card triple-card">
+              <div class="card-title">Dodaj wpłatę</div>
+              <select id="paymentSource" aria-label="Rodzaj wpłaty">
+                <option>Najem</option>
+                <option>Czynsz</option>
+                <option>Media</option>
+              </select>
+              <div class="triple-inline">
+                <input type="number" id="paymentAmount" placeholder="Kwota" aria-label="Kwota wpłaty (zł)">
+                <input type="date" id="paymentDate" aria-label="Data wpływu środków">
+              </div>
+              <div class="pi-payment-period-field">
+                <label for="paymentSettlementMonth">Rozliczenie za miesiąc</label>
+                <input type="month" id="paymentSettlementMonth">
+                <small>Data wpływu pozostaje faktyczna, a wybrany miesiąc decyduje, którą należność rozlicza wpłata.</small>
+              </div>
+              <textarea id="paymentNote" placeholder="Notatka" aria-label="Opis wpłaty"></textarea>
+              <input type="file" id="paymentAttachment" accept="image/*,.pdf" aria-label="Załącznik do wpłaty">
+              <button onclick="addPayment()">Dodaj wpłatę</button>
+              <button onclick="quickMonthlyRent()" class="green">Szybko dodaj najem za ten miesiąc</button>
+            </div>
+          </div>
+
+      <div id="piDashboardLatestCollapse" class="pi-command-collapse pi-admin-subtab">
+        <div class="card dashboard-live-card dashboard-transactions-card">
+          <div class="card-title">Ostatnie transakcje</div>
+          <div id="transactionsDashboard"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <section id="tab-portfolio" class="tab-view">
+      <div class="context-header pi-portfolio-header">
+        <div class="pi-portfolio-topline">
+          <div class="pi-portfolio-copy">
+            <h2>Portfel</h2>
+            <p>Przegląd finansów dla wybranego mieszkania lub całego portfela.</p>
+          </div>
+          <div class="pi-portfolio-controls">
+            <label>Zakres
+              <select id="portfolioScopeFilter" onchange="renderPortfolio()">
+                <option value="all">Wszystkie mieszkania</option>
+                <option value="property" selected>Wybrane mieszkanie</option>
+              </select>
+            </label>
+            <label>Mieszkanie
+              <select id="portfolioPropertyFilter" onchange="piPortfolioSetSelectedProperty(this.value)"></select>
+            </label>
+            <label>Okres
+              <select id="portfolioPeriodFilter" onchange="renderPortfolio()">
+                <option value="month">Ten miesiąc</option>
+                <option value="year">Ten rok</option>
+                <option value="history">Cała historia</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="pi-portfolio-currentline">
+          <span class="pi-context-label">Aktualny widok</span>
+          <strong id="portfolioContextTitle">Wybrane mieszkanie · Ten miesiąc</strong>
+          <small id="portfolioContextHint">Podsumowanie pokazuje najważniejsze dane dla wybranego zakresu.</small>
+        </div>
+      </div>
+
+      <div class="kpi-grid pi-portfolio-kpis">
+        <div class="kpi"><div class="kpi-label" id="portfolioIncomeLabel">Przychód — wszystkie mieszkania</div><div class="kpi-value" id="portfolioIncome">0 zł</div><div class="kpi-hint" id="portfolioIncomeHint">Ten miesiąc</div></div>
+        <div class="kpi"><div class="kpi-label" id="portfolioCostLabel">Koszty — wszystkie mieszkania</div><div class="kpi-value" id="portfolioCost">0 zł</div><div class="kpi-hint" id="portfolioCostHint">Ten miesiąc</div></div>
+        <div class="kpi"><div class="kpi-label" id="portfolioProfitLabel">Saldo — wszystkie mieszkania</div><div class="kpi-value" id="portfolioProfit">0 zł</div><div class="kpi-hint" id="portfolioProfitHint">Ten miesiąc</div></div>
+        <div class="kpi"><div class="kpi-label" id="portfolioCountLabel">Liczba mieszkań w portfelu</div><div class="kpi-value" id="portfolioCount">0</div><div class="kpi-hint" id="portfolioCountHint">Aktywne lokale</div></div>
+      </div>
+      <div class="card v7-finance-panel" id="v7RentEngineProPanel">
+        <div class="pi-card-title-with-context">
+          <div>
+            <div class="card-title">Analiza wybranego mieszkania</div>
+            <small id="portfolioSelectedPropertyContext">Wybierz mieszkanie, aby zobaczyć bieżący wynik lokalu.</small>
+          </div>
+          <span class="badge gray">Bieżący miesiąc</span>
+        </div>
+        <div class="v7-pro-grid">
+          <div class="v7-pro-card"><span>Najem właścicielski</span><b id="v7MonthlyIncome">0 zł</b><small>Stała kwota najmu bez mediów i opłat zwrotnych.</small></div>
+          <div class="v7-pro-card"><span>Koszty właściciela</span><b id="v7MonthlyCosts">0 zł</b><small>Koszty poza rozliczeniem z najemcą.</small></div>
+          <div class="v7-pro-card"><span>Prognozowany zysk po podatku</span><b id="v7MonthlyNet">0 zł</b><small>Prognoza według stawek najmu, kosztów i podatku; nie oznacza otrzymanych wpłat.</small></div>
+          <div class="v7-pro-card"><span>ROI roczne lokalu</span><b id="v7Roi">—</b><small id="v7RoiHint">Uzupełnij cenę zakupu mieszkania.</small></div>
+        </div>
+        <div class="v7-health warn" id="v7HealthBox">
+          <div class="v7-health-top"><b id="v7HealthTitle">Zdrowie mieszkania</b><span id="v7HealthStatus">Analiza</span></div>
+          <div id="v7HealthText">Rent Engine analizuje płatności, koszty, podatek i ROI dla wybranego mieszkania.</div>
+        </div>
+      </div>
+
+    </section>
+
+    <section id="tab-properties" class="tab-view">
+      <div class="context-header">
+        <h2>Nieruchomości</h2>
+        <p>Dane techniczne, adresy, statusy oraz edycja aktualnie wybranego mieszkania.</p>
+      </div>
+
+      <div class="pi-admin-tabs pi-unified-tabs pi-section-admin-toggles">
+        <button type="button" class="pi-admin-tab-btn active" onclick="piSectionTogglePanel('piPropertiesListCollapse', this, 'properties')">Lista nieruchomości</button>
+        <button type="button" class="pi-admin-tab-btn" onclick="piSectionTogglePanel('piPropertiesEditCollapse', this, 'propertyEdit')">Edytuj aktualne mieszkanie</button>
+        <button type="button" class="pi-admin-tab-btn" onclick="piSectionTogglePanel('piPropertiesLibraryCollapse', this)">Skrót do biblioteki</button>
+      </div>
+
+      <div id="piPropertiesListCollapse" class="pi-section-collapse pi-admin-subtab active">
+        <div class="card"><div class="card-title">Nieruchomości</div><div id="propertiesList"></div></div>
+      </div>
+
+      <div id="piPropertiesLibraryCollapse" class="pi-section-collapse pi-admin-subtab">
+        <div class="card"><div class="card-title">Biblioteka</div><div style="color:#6b6258;margin-bottom:12px;">Umowy, protokoły, faktury i galeria zdjęć są w jednej uproszczonej sekcji.</div><button class="subtle-link-btn" onclick="openTab('documents')">Otwórz dokumenty i zdjęcia</button></div>
+      </div>
+
+      <div id="piPropertiesEditCollapse" class="pi-section-collapse pi-admin-subtab">
+        <div class="card">
+          <div class="card-title">Edytuj aktualne mieszkanie</div>
+          <input id="editPropertyName" placeholder="Nazwa">
+          <input id="editPropertyAddress" placeholder="Adres">
+          <input id="editPropertyArea" type="number" min="0" step="0.01" placeholder="Metraż mieszkania (m²)">
+          <div style="font-size:11px;color:#6b6258;margin-top:6px;line-height:1.35;">Ten metraż zasila kartę mieszkania, ROI oraz podstawowe podsumowania finansowe.</div>
+          <div class="v7-form-grid">
+            <input id="editPurchasePrice" type="text" inputmode="decimal" placeholder="Cena zakupu / wartość mieszkania, np. 320000">
+            <input id="editPurchaseDate" type="date" placeholder="Data zakupu">
+            <input id="editEquityInvested" type="text" inputmode="decimal" placeholder="Wkład własny / kapitał, opcjonalnie">
+          </div>
+          <div style="font-size:11px;color:#6b6258;margin-top:6px;line-height:1.35;">Te dane zasilają ROI, rentowność i rekomendacje AIos'a.</div>
+          <button onclick="updateProperty()">Zapisz mieszkanie</button><div id="propertySaveStatusV727" style="font-size:12px;color:#6b6258;margin-top:8px;line-height:1.35;"></div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="tab-fee-breakdowns" class="tab-view">
+      <div class="context-header pi-fee-context-header">
+        <div class="pi-fee-heading-copy">
+          <div class="pi-fee-heading-line">
+            <div class="pi-fee-eyebrow">Funkcja opcjonalna</div>
+            <h2>Opłaty i media</h2>
+          </div>
+          <p>Ta sekcja nie zmienia należności, zaległości, kosztów ani działania Rent Engine.</p>
+        </div>
+        <span class="pi-fee-readonly-badge">Zapis automatyczny</span>
+      </div>
+
+      <div id="piFeeNotice" class="pi-fee-notice hidden"></div>
+
+      <div class="card pi-fee-filter-card pi-fee-filter-card-v198">
+        <label class="pi-fee-filter-field">Mieszkanie
+          <select id="piFeeProperty"></select>
+        </label>
+        <label class="pi-fee-filter-field pi-fee-month-field">Miesiąc
+          <input id="piFeeMonth" type="month">
+        </label>
+        <div class="pi-fee-inline-version" title="Informacja o wersji raportu">
+          <b id="piFeeOriginBadge" class="badge gray">Nie uzupełniono</b>
+          <span id="piFeeEditHint">Wybierz mieszkanie i miesiąc.</span>
+        </div>
+        <label class="pi-fee-tenant-toggle pi-fee-inline-toggle"><input id="piFeeTenantVisible" type="checkbox" data-fee-edit> Udostępnij najemcy</label>
+        <div id="piFeeSaveStatus" class="pi-fee-save-status pi-fee-inline-save">Autozapis aktywny</div>
+      </div>
+
+      <div class="pi-fee-kpi-grid">
+        <div class="pi-fee-kpi"><span>Czynsz w danych mieszkania</span><b id="piFeeBaseAmount">0,00 zł</b><small>Obowiązująca kwota z pola „czynsz administracyjny”.</small></div>
+        <div class="pi-fee-kpi"><span>Suma składników</span><b id="piFeeItemsSum">0,00 zł</b><small>Łączna wartość informacyjnej rozpiski.</small></div>
+        <div class="pi-fee-kpi"><span id="piFeeDifferenceLabel">Brak różnicy</span><b id="piFeeDifference">0,00 zł</b><small id="piFeeConsistencyText">Dodaj składniki, aby porównać sumę.</small></div>
+        <div class="pi-fee-kpi"><span>Rozpiska obowiązuje od</span><b id="piFeeEffectiveMonth">Brak rozpiski</b><small><span id="piFeeConsistencyStatus" class="pi-fee-status warning">Nie uzupełniono</span></small></div>
+      </div>
+
+      <div class="card pi-fee-editor-card pi-fee-collapsible is-collapsed" data-pi-fee-panel="rent">
+        <div class="pi-fee-card-heading pi-fee-collapse-head" data-pi-fee-panel-head role="button" tabindex="0" aria-label="Składniki czynszu administracyjnego — rozwiń lub zwiń">
+          <div class="pi-fee-collapse-title">
+            <div class="pi-fee-step">1</div>
+            <div><div class="card-title">Składniki czynszu administracyjnego</div><div id="piFeePanelSummaryRent" class="pi-fee-collapse-summary">0 poz. • 0,00 zł</div></div>
+          </div>
+          <button type="button" class="pi-fee-panel-toggle" data-pi-fee-panel-toggle aria-expanded="false"><span data-pi-fee-toggle-label>Rozwiń</span><i aria-hidden="true">⌄</i></button>
+        </div>
+        <div class="pi-fee-collapsible-body" data-pi-fee-panel-body hidden>
+          <div class="pi-fee-body-toolbar"><div class="pi-muted">Rozpisz czynsz na czytelne pozycje. Różnica względem kwoty mieszkania jest wyłącznie informacyjna.</div><button id="piFeeAddRowBtn" type="button" class="subtle-link-btn" data-fee-edit>+ Dodaj składnik</button></div>
+          <div class="table-wrap pi-fee-table-wrap">
+            <table class="finance-table pi-fee-table">
+              <thead><tr><th>#</th><th>Nazwa składnika</th><th>Kategoria</th><th>Kwota</th><th></th></tr></thead>
+              <tbody id="piFeeItemsBody"></tbody>
+            </table>
+          </div>
+          <div class="pi-fee-card-tools">
+            <button id="piFeeResetBtn" type="button" class="subtle-link-btn" data-fee-edit>Wyczyść pozycje</button>
+            <button id="piFeeDeleteBtn" type="button" class="pi-fee-danger-btn" data-fee-edit>Usuń wersję miesiąca</button>
+            <button id="piFeeSaveBtn" type="button" data-fee-edit hidden>Zapisz raport</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pi-fee-media-card pi-fee-collapsible is-collapsed" data-pi-fee-panel="media">
+        <div class="pi-fee-card-heading pi-fee-collapse-head" data-pi-fee-panel-head role="button" tabindex="0" aria-label="Zużycie mediów — rozwiń lub zwiń">
+          <div class="pi-fee-collapse-title">
+            <div class="pi-fee-step">2</div>
+            <div><div class="card-title">Zużycie mediów i rozliczenia licznikowe</div><div id="piFeePanelSummaryMedia" class="pi-fee-collapse-summary">0 mediów • 0,00 zł</div></div>
+          </div>
+          <button type="button" class="pi-fee-panel-toggle" data-pi-fee-panel-toggle aria-expanded="false"><span data-pi-fee-toggle-label>Rozwiń</span><i aria-hidden="true">⌄</i></button>
+        </div>
+        <div class="pi-fee-collapsible-body" data-pi-fee-panel-body hidden>
+          <div class="pi-fee-body-toolbar"><div class="pi-muted">Odczyty, stawki i zaliczki. Zużycie oraz wynik rozliczenia liczą się automatycznie.</div><div class="pi-media-heading-actions"><button id="piMediaImportBtn" type="button" class="pi-media-import-btn" data-fee-edit>Pobierz odczyty najemcy</button><button id="piMediaAddRowBtn" type="button" class="subtle-link-btn" data-fee-edit>+ Dodaj medium</button></div></div>
+          <div id="piMediaReadingStatus" class="pi-media-reading-status" aria-live="polite">Wybierz mieszkanie i miesiąc, aby sprawdzić odczyty.</div>
+          <div class="pi-media-summary-grid">
+            <div><span>Koszt rzeczywisty</span><b id="piMediaActualTotal">0,00 zł</b></div>
+            <div><span>Wpłacone zaliczki</span><b id="piMediaAdvancesTotal">0,00 zł</b></div>
+            <div><span>Wynik rozliczenia</span><b id="piMediaSettlementTotal" class="pi-media-total-value">Ładowanie…</b></div>
+          </div>
+          <div class="table-wrap pi-fee-table-wrap pi-media-table-wrap">
+            <table class="finance-table pi-fee-table pi-media-table">
+              <thead><tr><th>#</th><th>Medium</th><th>Okres od</th><th>Okres do</th><th>Jednostka</th><th>Stan pocz.</th><th>Stan końc.</th><th>Zużycie</th><th>Stawka</th><th>Koszt</th><th>Zaliczki</th><th>Rozliczenie</th><th></th></tr></thead>
+              <tbody id="piMediaItemsBody"></tbody>
+            </table>
+          </div>
+          <div class="pi-muted pi-media-footnote">Zużycie = stan końcowy − stan początkowy. Gdy brakuje obu stanów, możesz wpisać zużycie ręcznie.</div>
+        </div>
+      </div>
+
+      <div class="card pi-fee-history-card pi-fee-collapsible is-collapsed" data-pi-fee-panel="history">
+        <div class="pi-fee-card-heading pi-fee-collapse-head" data-pi-fee-panel-head role="button" tabindex="0" aria-label="Historia zmian raportu — rozwiń lub zwiń">
+          <div class="pi-fee-collapse-title pi-fee-collapse-title-no-step"><div><div class="card-title">Historia zmian raportu</div><div id="piFeePanelSummaryHistory" class="pi-fee-collapse-summary">Brak zapisanych wersji</div></div></div>
+          <button type="button" class="pi-fee-panel-toggle" data-pi-fee-panel-toggle aria-expanded="false"><span data-pi-fee-toggle-label>Rozwiń</span><i aria-hidden="true">⌄</i></button>
+        </div>
+        <div class="pi-fee-collapsible-body" data-pi-fee-panel-body hidden>
+          <div class="pi-muted pi-fee-section-help">Każda nowa wersja obowiązuje od wskazanego miesiąca. Brak raportu nie wpływa na pozostałe moduły.</div>
+          <div id="piFeeHistory" class="pi-fee-history"></div>
+        </div>
+      </div>
+
+      <div class="card pi-fee-final-card pi-fee-collapsible is-collapsed" data-pi-fee-panel="report">
+        <div class="pi-fee-card-heading pi-fee-collapse-head" data-pi-fee-panel-head role="button" tabindex="0" aria-label="Raport PDF — rozwiń lub zwiń">
+          <div class="pi-fee-collapse-title"><div class="pi-fee-step">3</div><div><div class="card-title">Raport dla administratora i najemcy</div><div id="piFeePanelSummaryReport" class="pi-fee-collapse-summary">PDF • tylko administrator</div></div></div>
+          <button type="button" class="pi-fee-panel-toggle" data-pi-fee-panel-toggle aria-expanded="false"><span data-pi-fee-toggle-label>Rozwiń</span><i aria-hidden="true">⌄</i></button>
+        </div>
+        <div class="pi-fee-collapsible-body" data-pi-fee-panel-body hidden>
+          <div class="pi-muted pi-fee-section-help">Dodaj krótką notatkę i wygeneruj dokument PDF z rozpisaniem opłat i mediów.</div>
+          <label class="pi-fee-notes-label">Notatka do raportu, opcjonalnie
+            <textarea id="piFeeNotes" rows="2" maxlength="1000" placeholder="np. rozliczenie na podstawie zawiadomienia wspólnoty z 01.08.2026"></textarea>
+          </label>
+          <button id="piFeeDownloadPdfBtn" type="button" class="pi-fee-pdf-btn">Wygeneruj i pobierz raport PDF</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-access" class="tab-view">
+      <div class="pi-admin-center">
+        <div class="pi-admin-hero">
+          <div class="pi-admin-hero-main">
+            <h2>Dostępy i najem</h2>
+            <p>Najem, role, kontakt, PIN-y i panel najemcy w jednym miejscu.</p>
+          </div>
+          <div class="pi-admin-hero-side">
+            <div class="pi-admin-stat"><span>Twoja rola</span><b id="piMyRoleBox">—</b></div>
+            <div class="pi-admin-stat"><span>Dostępy</span><b id="piAccessCountBox">0</b></div>
+            <div class="pi-admin-stat"><span>Mieszkanie</span><b id="piAccessPropertyBox">—</b></div>
+            <div class="pi-admin-stat"><span>Panel</span><b>Najem i dostęp</b></div>
+          </div>
+        </div>
+
+        <div class="pi-admin-tabs">
+          <button type="button" class="pi-admin-tab-btn active" onclick="piAccessSwitchSubtab('users',this)">Użytkownicy i panele</button>
+          <button type="button" class="pi-admin-tab-btn" onclick="piAccessSwitchSubtab('tenancy',this)">Karta najmu</button>
+          <button type="button" class="pi-admin-tab-btn" onclick="piAccessSwitchSubtab('assign',this)">Przypisania</button>
+          <button type="button" class="pi-admin-tab-btn" onclick="piAccessSwitchSubtab('model',this)">Model ról</button>
+        </div>
+
+        <div id="piAdminOnlyLock" class="pi-admin-lock hidden">Ten panel jest dostępny tylko dla Administratora. Owner oraz Tenant korzystają z ograniczonego widoku swoich mieszkań.</div>
+
+        <div id="piAdminSubtab-tenancy" class="pi-admin-subtab">
+          <div class="layout">
+            <div class="card">
+              <div class="card-title">Karta najmu</div>
+              <div class="pi-access-muted">Dane najmu i kontakt do najemcy. Logowanie, PIN oraz włączanie panelu najemcy ustawiasz w zakładce „Użytkownicy i panele”.</div>
+              <div class="form-row">
+                <input id="tenantNameInput" placeholder="Imię i nazwisko najemcy">
+                <input id="tenantPhoneInput" placeholder="Telefon najemcy">
+              </div>
+              <div class="form-row">
+                <input id="tenantEmailInput" placeholder="Email najemcy">
+                <input id="leaseStartInput" type="date">
+              </div>
+              <div class="form-row">
+                <input id="paymentAccountInput" placeholder="Numer konta do wpłat">
+                <input id="paymentAccountLabelInput" placeholder="Odbiorca / opis przelewu, opcjonalnie">
+              </div>
+              <div class="form-row pi-tenant-card-row-compact">
+                <input id="paymentDayInput" type="number" placeholder="Dzień płatności, np. 10">
+                <div class="pi-tenant-total-display">
+                  <span>Łączna należność miesięczna</span>
+                  <b id="piTenantCardExpectedTotal">0,00 zł</b>
+                  <small>Kwota wynika ze Stałych rozliczeń w sekcji Finanse.</small>
+                </div>
+                <input id="rentAmountInput" type="hidden">
+              </div>
+              <div class="pi-access-edit-actions">
+                <button type="button" onclick="updateTenant()">Zapisz kartę najmu</button>
+                <button type="button" class="small-btn dark" onclick="piFillAccessFromTenant()">Użyj danych do dostępu</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Status najemcy</div>
+              <div id="tenantDetails"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="piAdminSubtab-users" class="pi-admin-subtab active">
+          <div class="layout">
+            <div class="card">
+              <div class="card-title">Dodaj użytkownika i przypisz do konkretnego mieszkania</div>
+              <select id="piAccessPropertySelect" class="full" onchange="piRefreshAccessPanel()">
+                <option value="">Wybierz mieszkanie do przypisania</option>
+              </select>
+              <div class="pi-admin-form-grid">
+                <input id="piAccessName" placeholder="Imię i nazwisko / nazwa klienta">
+                <select id="piAccessRole">
+                  <option value="owner">Owner / właściciel / zarządca</option>
+                  <option value="tenant">Najemca / panel najemcy</option>
+                </select>
+                <input id="piAccessPhone" inputmode="tel" placeholder="Telefon do logowania">
+                <input id="piAccessPin" inputmode="numeric" placeholder="PIN / hasło">
+                <input id="piAccessEmail" class="full" type="email" placeholder="Email opcjonalnie">
+              </div>
+              <div class="pi-access-edit-actions pi-access-form-actions">
+                <button type="button" onclick="piGrantPropertyAccess()">Dodaj użytkownika i przypisz mieszkanie</button>
+                <button type="button" class="small-btn dark" onclick="piFillAccessFromTenant()">Uzupełnij z karty najmu</button>
+              </div>
+              <div id="piAccessMsg" class="pi-access-msg"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Użytkownicy przypisani do wybranego mieszkania</div>
+              <div id="piUsersList" class="pi-admin-table">Ładowanie...</div>
+              <div id="piAccessEditPanel" class="pi-access-edit-panel hidden">
+                <div class="pi-access-edit-head">
+                  <div>
+                    <b>Edytuj dostęp użytkownika</b>
+                    <span id="piAccessEditPropertyLabel">Mieszkanie: —</span>
+                  </div>
+                  <button type="button" class="small-btn" onclick="piCancelAccessEdit()">Zamknij</button>
+                </div>
+                <input id="piAccessEditId" type="hidden">
+                <div class="pi-admin-form-grid">
+                  <input id="piAccessEditName" placeholder="Imię i nazwisko / nazwa klienta">
+                  <select id="piAccessEditRole">
+                    <option value="owner">Owner / właściciel / zarządca</option>
+                    <option value="tenant">Najemca / panel najemcy</option>
+                  </select>
+                  <input id="piAccessEditPhone" inputmode="tel" placeholder="Telefon do logowania">
+                  <input id="piAccessEditPin" inputmode="numeric" placeholder="Nowy PIN / hasło — puste = bez zmiany">
+                  <input id="piAccessEditEmail" class="full" type="email" placeholder="Email opcjonalnie">
+                  <select id="piAccessEditStatus" class="full">
+                    <option value="active">Aktywny</option>
+                    <option value="inactive">Nieaktywny</option>
+                  </select>
+                </div>
+                <div class="pi-access-edit-actions">
+                  <button type="button" onclick="piSaveAccessEdit()">Zapisz zmiany</button>
+                  <button type="button" class="small-btn dark" onclick="piCancelAccessEdit()">Anuluj</button>
+                </div>
+                <div id="piAccessEditMsg" class="pi-access-msg"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="piAdminSubtab-assign" class="pi-admin-subtab">
+          <div class="card">
+            <div class="card-title">Przypisania do aktualnego mieszkania</div>
+            <div id="piPropertyAccessList">Wybierz mieszkanie.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Wszystkie przypisania w systemie</div>
+            <div id="piAllAccessList">Ładowanie...</div>
+          </div>
+        </div>
+
+        <div id="piAdminSubtab-model" class="pi-admin-subtab">
+          <div class="pi-admin-model">
+            <div class="pi-admin-model-card"><b>Admin</b><span>Pełny dostęp do całej bazy, wszystkich mieszkań, ownerów, najemców, raportów i ustawień systemu.</span></div>
+            <div class="pi-admin-model-card"><b>Owner</b><span>Właściciel albo zarządca klienta. Loguje się telefonem i PIN-em. Widzi i obsługuje wyłącznie swoje mieszkania.</span></div>
+            <div class="pi-admin-model-card"><b>Najemca</b><span>Najemca loguje się telefonem i PIN-em ustawionym tutaj. Widzi tylko swój panel najemcy i przypisane mieszkanie.</span></div>
+            <div class="pi-admin-model-card"><b>Zasada</b><span>Karta najmu opisuje relację i warunki najmu. Użytkownicy i panele obsługują logowanie, role, PIN-y i status panelu.</span></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <section id="tab-transactions" class="tab-view">
+      <div class="context-header">
+        <h2>Finanse</h2>
+        <p>Centrum finansów mieszkania: analiza PRO, wpływy, koszty, stałe rozliczenia i historia.</p>
+      </div>
+
+      <div class="pi-admin-tabs pi-unified-tabs pi-transactions-admin-toggles pi-finance-main-tabs">
+        <button type="button" id="piFinanceOverviewTopBtn" class="pi-admin-tab-btn active" onclick="piFinanceGroupOpen('piTransactionsFinanceProPanel', this, 'financePro')">Przegląd</button>
+        <button type="button" id="piFinanceOperationsTopBtn" class="pi-admin-tab-btn" onclick="piFinanceGroupOpen('piTransactionsOperationsPanel', this, 'operations')">Operacje</button>
+        <button type="button" id="piTransactionsFixedSettlementsTopBtn" class="pi-admin-tab-btn" onclick="piFinanceGroupOpen('piTenantMonthlyCollapse', this, 'fixedSettlements')">Stałe rozliczenia</button>
+        <button type="button" id="piFinanceHistoryTopBtn" class="pi-admin-tab-btn" onclick="piFinanceGroupOpen('piTransactionsHistoryGroupPanel', this, 'history')">Historia</button>
+      </div>
+
+      <div id="piTransactionsFinanceProPanel" class="pi-transactions-collapse pi-admin-subtab active pi-finance-overview-panel">
+      <div class="card pi-finance-filter-card">
+        <div>
+          <div class="card-title">Przegląd finansów</div>
+          <div class="pi-muted">Podsumowanie wpływów, kosztów, salda, podatku i prognozy.</div>
+        </div>
+        <label class="pi-finance-scope-field">Zakres
+          <select id="financeScope" onchange="renderFinancePro()">
+            <option value="property">Tylko wybrane mieszkanie</option>
+            <option value="all">Wszystkie mieszkania / cały portfel</option>
+          </select>
+        </label>
+      </div>
+      <div class="kpi-grid pi-finance-kpi-grid-v1921">
+        <div class="kpi" title="Faktyczna gotówka zaksięgowana w wybranym roku do dziś."><div class="kpi-label">Wpływy otrzymane YTD</div><div class="kpi-value" id="yearIncome">0 zł</div></div>
+        <div class="kpi" title="Faktycznie poniesione koszty: czynsz administracyjny, media oraz koszty właściciela."><div class="kpi-label">Koszty zapłacone YTD</div><div class="kpi-value" id="yearCost">0 zł</div></div>
+        <div class="kpi" title="Wpływy minus wszystkie faktyczne koszty i podatek od otrzymanego najmu."><div class="kpi-label">Cashflow netto YTD</div><div class="kpi-value" id="yearProfit">0 zł</div></div>
+        <div class="kpi" title="Podatek liczony od najmu faktycznie otrzymanego w wybranym roku."><div class="kpi-label">Podatek od najmu YTD</div><div class="kpi-value" id="yearTax">0 zł</div></div>
+      </div>
+      <div class="kpi-grid pi-finance-kpi-grid-v1921">
+        <div class="kpi" title="Należny najem właścicielski za cały wybrany rok, zgodnie z aktywnymi okresami najmu."><div class="kpi-label">Należny najem — cały rok</div><div class="kpi-value" id="rentIncomeKpi">0 zł</div></div>
+        <div class="kpi" title="Faktycznie zapłacony czynsz administracyjny / wspólnota w wybranym roku do dziś."><div class="kpi-label">Czynsz administracyjny YTD</div><div class="kpi-value" id="communityCostKpi">0 zł</div></div>
+        <div class="kpi" title="Faktyczne media i pozostałe opłaty przenoszone na najemcę, bez czynszu administracyjnego."><div class="kpi-label">Media / rachunki YTD</div><div class="kpi-value" id="mediaIncomeKpi">0 zł</div></div>
+        <div class="kpi" title="Prognozowany cashflow na koniec roku: gotówka już otrzymana + brakujący należny najem − koszty już poniesione − przewidywane koszty właściciela − prognozowany podatek. Przyszłe opłaty przenoszone są traktowane jako neutralne."><div class="kpi-label">Prognoza cashflow — koniec roku</div><div class="kpi-value" id="forecastKpi">0 zł</div></div>
+      </div>
+      <div class="pi-finance-owner-cost-note">Koszty właściciela YTD: <b id="ownerCostKpi">0 zł</b> <span>• remonty, serwis, ubezpieczenie i inne koszty nieprzenoszone na najemcę</span></div>
+      <div id="financeSummary" class="pi-hidden-technical-summary" aria-hidden="true"></div>
+      <div class="layout pi-finance-bottom-grid">
+        <div class="card pi-finance-bottom-card pi-finance-monthly-card">
+          <div class="card-title">Roczna historia rozliczeń</div>
+          <div class="pi-card-hint">Należność i jej pokrycie są pokazane na koniec każdego miesiąca, z uwzględnieniem wcześniejszych nadpłat. Kolumna braku nie dolicza wcześniejszych zaległości. Wynik i podatek dotyczą dat rzeczywistych wpływów. Łączne zaległości pokazuje Rent Autopilot powyżej.</div>
+          <div class="table-wrap"><table class="finance-table pi-autopilot-monthly-table"><thead><tr><th>Miesiąc</th><th>Należne</th><th>Rozliczono za miesiąc</th><th>Brak / nowa nadpłata</th><th>Najem właścicielski</th><th>Opłaty zwrotne</th><th>Koszty właściciela</th><th>Podatek</th><th>Wynik właściciela</th><th>Status</th></tr></thead><tbody id="monthlyTable"></tbody></table></div>
+        </div>
+      </div>
+      </div>
+
+      <div id="piTenantMonthlyCollapse" class="pi-tenant-collapse pi-transactions-collapse pi-admin-subtab hidden">
+        <div class="card">
+          <div class="card-title">Stałe rozliczenie miesięczne</div>
+
+          <div class="owner-rent-panel">
+            <div>
+              <div class="form-row">
+                <input id="ownerRentInput" type="number" placeholder="Najem dla właściciela">
+                <input id="communityRentInput" type="number" placeholder="Czynsz do wspólnoty">
+              </div>
+
+              <div class="form-row">
+                <input id="electricityExpectedInput" type="number" placeholder="Prąd">
+                <input id="gasExpectedInput" type="number" placeholder="Gaz">
+              </div>
+
+              <div class="form-row">
+                <input id="waterExpectedInput" type="number" placeholder="Woda">
+                <input id="rentDueDayInput" type="number" placeholder="Dzień płatności">
+              </div>
+
+              <button onclick="updateTenant()">Zapisz rozliczenie najemcy</button>
+
+              <div class="owner-rent-note">
+                „Najem dla właściciela” to Twoja stała miesięczna kwota przychodu z najmu. Pozostałe pozycje są opłatami pobieranymi od najemcy razem z najmem.
+              </div>
+            </div>
+
+            <div class="owner-rent-summary">
+              <div class="label">Najemca powinien płacić miesięcznie</div>
+              <div class="value" id="tenantExpectedTotal">0 zł</div>
+
+              <div class="owner-rent-breakdown">
+                <div><span>Dla właściciela</span><b id="tenantOwnerRentView">0 zł</b></div>
+                <div><span>Wspólnota</span><b id="tenantCommunityRentView">0 zł</b></div>
+                <div><span>Prąd</span><b id="tenantElectricityView">0 zł</b></div>
+                <div><span>Gaz</span><b id="tenantGasView">0 zł</b></div>
+                <div><span>Woda</span><b id="tenantWaterView">0 zł</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="piTransactionsMailPanel" class="pi-transactions-collapse pi-admin-subtab hidden">
+        <div id="piMailCostImportCard" class="card pi-mail-cost-card hidden">
+        <div class="pi-mail-head">
+          <div>
+            <h3>Import kosztów z poczty</h3>
+          </div>
+          <span class="pi-mail-badge">Admin only • co 12h</span>
+        </div>
+
+        <div class="pi-mail-actions">
+          <button type="button" onclick="piMailConnectGmail()">Połącz Gmail</button>
+          <button type="button" class="subtle-link-btn" onclick="piMailScanNow()">Skanuj teraz</button>
+          <button type="button" class="subtle-link-btn" onclick="piMailLoadAll()">Odśwież moduł</button>
+          <span class="pi-mail-badge soft" id="piMailScannerState">Gmail: sprawdzanie...</span>
+        </div>
+        <div id="piMailStatus" class="pi-mail-status">Gmail gotowy do skanowania. PureInvest AI rozpoznaje mieszkanie z tytułu wiadomości, np. Żeglarska / Gdańska, a gdy kwota nie zostanie odczytana, podpowiada ją z historii zatwierdzonych faktur.</div>
+
+        <div class="pi-mail-panel pi-mail-priority-panel">
+          <div class="pi-mail-panel-title"><b>Faktury do akceptacji</b><span id="piMailCandidatesCounter">0</span></div>
+          <div class="pi-mail-muted-box" style="margin-bottom:10px;">To jest główna lista robocza. Tu są tylko pozycje czekające na Twoją decyzję. Po zatwierdzeniu, odrzuceniu albo oznaczeniu jako duplikat faktura znika z tej listy. Nic nie księguje się automatycznie.</div>
+          <div id="piMailCandidatesList"><div class="pi-mail-muted-box">Ładowanie faktur do akceptacji...</div></div>
+          <div class="pi-mail-approved-section">
+            <div class="pi-mail-approved-title">Ostatnio zatwierdzone faktury <span id="piMailApprovedCounter">0</span></div>
+            <div id="piMailApprovedList"><div class="pi-mail-muted-box">Brak zatwierdzonych faktur w ostatniej historii.</div></div>
+          </div>
+        </div>
+
+        <div class="pi-mail-admin-toggles">
+          <button type="button" class="pi-mail-toggle-btn" onclick="piMailTogglePanel('piMailAccountsCollapse', this)">Połączone konta Gmail <span id="piMailConnectionsCounter">0/2</span></button>
+          <button type="button" class="pi-mail-toggle-btn" onclick="piMailTogglePanel('piMailSendersCollapse', this)">Zaufani nadawcy <span id="piMailSendersCounter">0/20</span></button>
+          <button type="button" class="pi-mail-toggle-btn" onclick="piMailTogglePanel('piTransactionsHistoryCollapse', this)">Pełna historia transakcji</button>
+        </div>
+
+        <div id="piMailAccountsCollapse" class="pi-mail-collapse hidden">
+          <div class="pi-mail-panel">
+            <div class="pi-mail-panel-title"><b>Połączone konta Gmail</b><span id="piMailConnectionsTitleCounter">0/2</span></div>
+            <div class="pi-mail-muted-box" style="margin-bottom:10px;">Lista techniczna połączonych skrzynek. Ukryta domyślnie, bo najważniejsze są faktury czekające na zatwierdzenie.</div>
+            <div id="piMailConnectionsList"><div class="pi-mail-muted-box">Ładowanie kont Gmail...</div></div>
+          </div>
+        </div>
+
+        <div id="piMailSendersCollapse" class="pi-mail-collapse hidden">
+          <div class="pi-mail-panel">
+            <div class="pi-mail-panel-title"><b>Zaufani nadawcy rachunków</b><span>maks. 20</span></div>
+            <div class="pi-mail-muted-box" style="margin-bottom:10px;">Lista nadawców jest ustawieniem administracyjnym, dlatego pozostaje schowana pod przyciskiem. Skan Gmaila analizuje wyłącznie aktywnych nadawców z tej listy.</div>
+            <div class="pi-mail-toolbar">
+              <div><label>Email nadawcy</label><input id="piMailSenderEmail" type="email" placeholder="np. faktury@dostawca.pl"></div>
+              <div><label>Nazwa / dostawca</label><input id="piMailSenderVendor" placeholder="np. Enea, PGNiG, Wspólnota"></div>
+              <div><label>Kategoria</label><select id="piMailSenderCategory"></select></div>
+              <div><button type="button" onclick="piMailAddSender()">Dodaj</button></div>
+            </div>
+            <div class="pi-mail-toolbar" style="grid-template-columns:1fr .55fr auto;align-items:center;margin-top:0;">
+              <div><label>Domyślne mieszkanie</label><select id="piMailSenderProperty"></select></div>
+              <div style="padding-top:18px;"><label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:12px;"><input id="piMailSenderReadPdf" type="checkbox" checked style="width:auto;min-height:auto;margin:0;"> czytaj PDF</label></div>
+              <button type="button" class="subtle-link-btn" onclick="piMailAddTestCandidate()">Dodaj testowy koszt</button>
+            </div>
+            <div id="piMailSendersList"><div class="pi-mail-muted-box">Ładowanie nadawców...</div></div>
+          </div>
+        </div>
+      </div>
+
+        <div id="piTransactionsHistoryCollapse" class="pi-mail-collapse hidden">
+          <div class="card">
+            <div class="card-title">Pełna historia transakcji</div>
+            <div class="transaction-controls">
+              <select id="transactionSort" onchange="renderTransactions(rawPayments, rawExpenses)">
+                <option value="newest">Sortuj: najnowsze</option>
+                <option value="oldest">Sortuj: najstarsze</option>
+                <option value="amount_desc">Sortuj: największa kwota</option>
+                <option value="amount_asc">Sortuj: najmniejsza kwota</option>
+                <option value="name_asc">Sortuj: A-Z</option>
+                <option value="name_desc">Sortuj: Z-A</option>
+              </select>
+              <select id="transactionLimit" onchange="renderTransactions(rawPayments, rawExpenses)">
+                <option value="10" selected>Pokaż: 10 ostatnich</option>
+                <option value="25">Pokaż: 25</option>
+                <option value="50">Pokaż: 50</option>
+                <option value="100">Pokaż: 100</option>
+                <option value="all">Pokaż: wszystkie</option>
+              </select>
+              <select id="transactionCategoryFilter" onchange="renderTransactions(rawPayments, rawExpenses)">
+                <option value="all">Kategoria: wszystkie</option>
+              </select>
+            </div>
+            <div id="transactionsInfo" class="transactions-info"></div>
+            <div id="transactions"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="piTransactionsPropertyFinancePanel" class="pi-transactions-collapse pi-admin-subtab">
+        <div class="card pi-property-finance-card">
+          <div class="card-title">Finanse mieszkania</div>
+          <div class="pi-mail-muted-box" style="margin-bottom:12px;">Wybierz mieszkanie i zobacz tylko przypisane do niego koszty oraz wpływy. To roboczy widok zarządcy dla jednego lokalu.</div>
+          <div class="pi-property-finance-toolbar">
+            <div><label>Mieszkanie</label><select id="piPropertyFinanceSelect" onchange="piRenderPropertyFinance()"></select></div>
+            <div><label>Rok</label><select id="piPropertyFinanceYear" onchange="piRenderPropertyFinance()"><option value="all">Wszystkie lata</option></select></div>
+            <div><label>Miesiąc</label><select id="piPropertyFinanceMonth" onchange="piRenderPropertyFinance()"><option value="all">Wszystkie miesiące</option></select></div>
+            <div><label>Typ</label><select id="piPropertyFinanceType" onchange="piRenderPropertyFinance()"><option value="all">Wpływy i koszty</option><option value="income">Tylko wpływy</option><option value="expense">Tylko koszty</option></select></div>
+          </div>
+          <div class="kpi-grid pi-property-finance-kpis">
+            <div class="kpi"><div class="kpi-label">Wpływy</div><div class="kpi-value" id="piPropertyFinanceIncome">0 zł</div></div>
+            <div class="kpi"><div class="kpi-label">Koszty</div><div class="kpi-value" id="piPropertyFinanceCost">0 zł</div></div>
+            <div class="kpi"><div class="kpi-label">Saldo operacyjne</div><div class="kpi-value" id="piPropertyFinanceBalance">0 zł</div></div>
+            <div class="kpi"><div class="kpi-label">Pozycji</div><div class="kpi-value" id="piPropertyFinanceCount">0</div></div>
+          </div>
+          <div class="pi-property-finance-subbar">
+            <select id="piPropertyFinanceSort" onchange="piRenderPropertyFinance()">
+              <option value="newest">Sortuj: najnowsze</option>
+              <option value="oldest">Sortuj: najstarsze</option>
+              <option value="amount_desc">Sortuj: największa kwota</option>
+              <option value="amount_asc">Sortuj: najmniejsza kwota</option>
+            </select>
+            <select id="piPropertyFinanceLimit" onchange="piRenderPropertyFinance()">
+              <option value="25" selected>Pokaż: 25</option>
+              <option value="50">Pokaż: 50</option>
+              <option value="100">Pokaż: 100</option>
+              <option value="all">Pokaż: wszystkie</option>
+            </select>
+            <button type="button" class="subtle-link-btn" onclick="piRenderPropertyFinance(true)">Odśwież finanse mieszkania</button>
+          </div>
+          <div id="piPropertyFinanceInfo" class="transactions-info"></div>
+          <div id="piPropertyFinanceList"><div class="transactions-info">Wybierz mieszkanie, aby zobaczyć jego transakcje.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-tickets" class="tab-view">
+      <div id="piTicketsBoot" class="card">
+        <div class="card-title">Zgłoszenia</div>
+        <div class="transactions-info">Ładowanie centrum zgłoszeń usterek i ticketingu...</div>
+      </div>
+    </section>
+
+    <section id="tab-documents" class="tab-view">
+      <div id="piDocumentsBoot" class="card">
+        <div class="card-title">Biblioteka</div>
+        <div class="transactions-info">Ładowanie uporządkowanej biblioteki dokumentów i zdjęć...</div>
+      </div>
+    </section>
+
+    <section id="tab-diagnostics" class="tab-view">
+      <div class="context-header">
+        <h2>Diagnostyka systemu</h2>
+        <p>Jedno miejsce do sprawdzenia, czy Supabase, Netlify, Storage, role, SQL i najważniejsze moduły są gotowe pod wersję sprzedażową.</p>
+      </div>
+      <div class="pi-diagnostics-toolbar card">
+        <div>
+          <div class="card-title" data-app-version>PureInvest OS 1.9.24</div>
+        </div>
+        <div class="pi-diagnostics-actions">
+          <button type="button" onclick="piRunDiagnosticsV770(true)">Uruchom diagnostykę</button>
+        </div>
+      </div>
+      <div class="pi-diagnostics-summary" id="piDiagnosticsSummary">Diagnostyka nieuruchomiona.</div>
+      <div id="piDiagnosticsList" class="pi-diagnostics-grid"></div>
+      <div class="card">
+        <div class="card-title">Checklist przed uruchomieniem produkcyjnym</div>
+        <div id="piRcChecklist" class="pi-rc-checklist"></div>
+      </div>
+    </section>
+
+    <section id="tab-reports" class="tab-view">
+      <div class="context-header reports-pro-header">
+        <div>
+          <h2>Raporty PRO</h2>
+          <p>Profesjonalne raporty właścicielskie z analizą, wykresami, planem działań i eksportem PDF.</p>
+        </div>
+        <div class="reports-pro-badge">Raporty właścicielskie</div>
+      </div>
+
+      <div class="reports-pro-shell reports-pro-shell-compact">
+        <div class="card reports-pro-builder reports-pro-builder-compact">
+          <div class="reports-pro-builder-top">
+            <div class="reports-pro-builder-copy">
+              <div class="card-title">Generator raportu</div>
+              <div class="pi-muted">Wybierz raport, zakres i od razu przejdź do podglądu lub eksportu.</div>
+            </div>
+            <div class="reports-pro-actions reports-pro-actions-compact">
+              <button type="button" onclick="piReportsRefresh(true)">Podgląd</button>
+              <button type="button" onclick="piReportsDownloadPdf()">PDF</button>
+              <button type="button" class="subtle-link-btn" onclick="piReportsExportCsv()">CSV</button>
+            </div>
+          </div>
+
+          <div class="reports-pro-builder-body">
+            <div class="reports-pro-grid reports-pro-grid-compact">
+              <label>Typ raportu
+                <select id="piReportType" onchange="piReportsRefresh()">
+                  <option value="property">Raport miesięczny mieszkania</option>
+                  <option value="portfolio">Raport portfela</option>
+                  <option value="owner">Raport właścicielski</option>
+                </select>
+              </label>
+              <label>Nieruchomość
+                <select id="piReportProperty" onchange="piReportsRefresh()"></select>
+              </label>
+              <label>Okres
+                <select id="piReportPeriod" onchange="piReportsTogglePeriod();piReportsRefresh()">
+                  <option value="month">Miesiąc</option>
+                  <option value="year">Rok</option>
+                  <option value="all">Cała historia</option>
+                </select>
+              </label>
+              <label id="piReportMonthWrap">Miesiąc
+                <input id="piReportMonth" type="month" onchange="piReportsRefresh()">
+              </label>
+              <label id="piReportYearWrap" class="hidden">Rok
+                <input id="piReportYear" type="number" min="2020" max="2100" onchange="piReportsRefresh()">
+              </label>
+            </div>
+
+            <details class="reports-pro-advanced">
+              <summary>Opcje raportu</summary>
+              <div class="reports-pro-advanced-body">
+                <div class="reports-pro-options-toolbar">
+                  <div>
+                    <b>Zawartość raportu</b>
+                    <small>Wybierz sekcje, które mają wejść do podglądu, PDF i eksportu.</small>
+                  </div>
+                </div>
+
+                <div class="reports-pro-options reports-pro-options-compact">
+                  <label><input id="piReportIncludeTransactions" type="checkbox" checked onchange="piReportsRefresh()"><span>Lista transakcji</span></label>
+                  <label><input id="piReportIncludeCategories" type="checkbox" checked onchange="piReportsRefresh()"><span>Kategorie kosztów</span></label>
+                  <label><input id="piReportIncludeCharts" type="checkbox" checked onchange="piReportsRefresh()"><span>Wykresy i analiza PRO</span></label>
+                  <label><input id="piReportIncludeInsights" type="checkbox" checked onchange="piReportsRefresh()"><span>Wnioski i plan działań</span></label>
+                  <label><input id="piReportIncludeAICommentary" type="checkbox" checked onchange="piReportsRefresh()"><span>Komentarz AI PRO</span></label>
+                  <label><input id="piReportIncludeFooter" type="checkbox" checked onchange="piReportsRefresh()"><span>Stopka PureInvest</span></label>
+                </div>
+
+                <div class="reports-pro-comment-grid">
+                  <label class="reports-pro-note-label reports-pro-note-label-compact">Komentarz zarządcy
+                    <textarea id="piReportManagerNote" rows="2" oninput="piReportsRefresh()" placeholder="Opcjonalny komentarz zarządcy."></textarea>
+                  </label>
+
+                  <div class="reports-pro-market-auto-card">
+                    <div class="reports-pro-market-auto-head">
+                      <div>
+                        <b>Market Intelligence</b>
+                        <small>Automatyczne dane rynkowe do raportu. System odświeża snapshot co 7 dni albo ręcznie po kliknięciu.</small>
+                      </div>
+                      <button type="button" class="subtle-link-btn" onclick="piMarketIntelligenceSync(true)">Odśwież dane</button>
+                    </div>
+                    <div id="piMarketIntelligenceAutoStatus" class="reports-pro-market-auto-status">Dane zostaną pobrane automatycznie przy generowaniu raportu.</div>
+                    <div id="piMarketIntelligenceAutoPreview" class="reports-pro-market-auto-preview"></div>
+                    <select id="piReportMarketTrend" class="pi-market-auto-hidden" aria-hidden="true"><option value=""></option><option value="wzrostowy">Wzrostowy</option><option value="stabilny">Stabilny</option><option value="spadkowy">Spadkowy</option></select>
+                    <select id="piReportCostTrend" class="pi-market-auto-hidden" aria-hidden="true"><option value=""></option><option value="rosnący">Rosnący</option><option value="stabilny">Stabilny</option><option value="spadkowy">Spadkowy</option></select>
+                    <input id="piReportMarketSource" class="pi-market-auto-hidden" type="hidden">
+                    <input id="piReportMarketRentPerM2" class="pi-market-auto-hidden" type="hidden">
+                    <input id="piReportMarketSalePerM2" class="pi-market-auto-hidden" type="hidden">
+                    <input id="piReportMarketRentYoY" class="pi-market-auto-hidden" type="hidden">
+                    <input id="piReportMarketPriceYoY" class="pi-market-auto-hidden" type="hidden">
+                    <input id="piReportMarketUpdatedAt" class="pi-market-auto-hidden" type="hidden">
+                    <textarea id="piReportMarketNote" class="pi-market-auto-hidden" aria-hidden="true"></textarea>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card reports-pro-preview-card">
+        <div class="reports-pro-preview-toolbar">
+          <div>
+            <div class="card-title">Podgląd raportu</div>
+            <div id="piReportsContext" class="pi-muted">Wybierz typ raportu i okres.</div>
+          </div>
+          <div id="piReportsStatus" class="reports-pro-status">Gotowe</div>
+        </div>
+        <div id="reports" class="reports-pro-preview"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+window.PI_CONFIG = Object.assign({
+  SUPABASE_URL:'https://qwcohaglwowpgjgbfscw.supabase.co',
+  SUPABASE_PUBLISHABLE_KEY:'sb_publishable_v-9m11onzicV5-rWwZYwPw_57l7Q91-'
+}, window.PI_CONFIG || {});
+</script>
+<script src="js/version.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/config.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/security-ui.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/diagnostics.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/friend-sandbox.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/friend-login-bridge.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/bootstrap.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/cache-guard.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/app-core.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<nav id="mobileBottomNav" class="mobile-bottom-nav">
+  <button type="button" onclick="switchTab('dashboard', document.querySelector('.nav-item[onclick*=dashboard]'))">⌂<span>Start</span></button>
+  <button type="button" onclick="piOpenTransactionsFinancePro()">$<span>Finanse</span></button>
+  <button type="button" onclick="openQuickActionsView()">↕<span>Ruchy</span></button>
+  <button type="button" onclick="switchTab('documents', document.querySelector('.nav-item[onclick*=documents]'))">□<span>Pliki</span></button>
+  <button type="button" onclick="toggleMobileDrawer()">☰<span>Menu</span></button>
+</nav>
+
+<div class="pureinvest-author-footer" aria-label="PureInvest">PureInvest</div>
+
+<script src="js/modules/mobile-drawer.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/app-state.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/properties.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/ui-helpers.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/library-base.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/filtering.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/payment-period.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/unified-settlement-engine.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/finance-widgets.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/charts.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/reports.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/documents.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/ocr.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/navigation.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/parobek-ai-mini.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/auth-guard.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/mobile-auth.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<div id="tenantPortalScreen" class="pi-tenant-screen hidden">
+  <div class="pi-tenant-shell">
+    <div class="pi-tenant-top">
+      <div class="pi-tenant-logo">Pure<span>Invest</span></div>
+      <button class="pi-tenant-logout" onclick="tenantLogoutV54()">Wyloguj</button>
+    </div>
+    <div class="pi-tenant-hero">
+      <div class="pi-tenant-kicker">Panel najemcy</div>
+      <div class="pi-tenant-title" id="tenantPortalTitle">Moje mieszkanie</div>
+      <div class="pi-tenant-sub" id="tenantPortalSubtitle">Podgląd rozliczeń, dokumentów i zgłoszeń serwisowych.</div>
+    </div>
+    <div id="tenantApartmentCenterV56" class="pi-tenant-center hidden"></div>
+    <div id="tenantPropertyChooserV551" class="pi-tenant-card pi-tenant-card-wide hidden"></div>
+    <div class="pi-tenant-grid" id="tenantPortalGrid">
+      <div class="pi-tenant-card pi-tenant-card-payments">
+        <div class="pi-tenant-card-title">Status płatności</div>
+        <div id="tenantPortalPayments">Ładowanie...</div>
+      </div>
+      <div class="pi-tenant-card pi-tenant-assistant pi-tenant-card-helper">
+        <div class="pi-tenant-card-title">🤖 Wirtualny Pomocnik</div>
+        <div id="tenantPortalAssistant" class="pi-tenant-advice-list">Ładowanie wskazówek...</div>
+      </div>
+      <div class="pi-tenant-card pi-tenant-card-wide pi-tenant-card-settlement-history">
+        <div class="pi-tenant-card-title">Historia rozliczeń</div>
+        <div class="pi-tenant-muted">Ostatnie 12 miesięcy. Rozwiń wybrany miesiąc, aby zobaczyć należności i wpłaty.</div>
+        <div id="tenantSettlementHistoryV180" class="pi-tenant-issue-list" data-history-build="20260811-tenant-session-guard-v1919">Synchronizuję historię rozliczeń…</div>
+      </div>
+      <div id="tenantFeeReportCardV193" class="pi-tenant-card pi-tenant-card-wide pi-tenant-fee-report">
+        <div class="pi-tenant-fee-head">
+          <div>
+            <div class="pi-tenant-card-title">Raport opłat i zużycia mediów</div>
+            <div id="tenantFeeReportSubtitleV193" class="pi-tenant-muted">Szczegółowa rozpiska udostępniona przez właściciela lub zarządcę.</div>
+          </div>
+          <div class="pi-tenant-fee-actions">
+            <select id="tenantFeeReportMonthV193" aria-label="Wersja raportu opłat"></select>
+            <button id="tenantFeeRefreshBtnV198" type="button" class="subtle-link-btn">Odśwież</button>
+            <button id="tenantFeePdfBtnV193" type="button">Pobierz PDF</button>
+          </div>
+        </div>
+        <div id="tenantFeeReportContentV193">Ładowanie raportu…</div>
+      </div>
+      <div class="pi-tenant-card pi-tenant-card-issue">
+        <div class="pi-tenant-card-title">Zgłoś awarię / problem</div>
+        <div class="pi-tenant-muted" style="margin-bottom:10px;">Opisz krótko, co się stało. Zgłoszenie trafi do właściciela lub zarządcy ze statusem i historią.</div>
+        <input id="tenantIssueTitle" placeholder="Krótko: np. Nie działa piekarnik">
+        <div class="pi-tenant-ticket-grid">
+          <select id="tenantIssueCategory" aria-label="Kategoria zgłoszenia">
+            <option value="Usterka">Usterka</option>
+            <option value="Hydraulika">Hydraulika</option>
+            <option value="Elektryka">Elektryka</option>
+            <option value="Ogrzewanie">Ogrzewanie</option>
+            <option value="AGD / wyposażenie">AGD / wyposażenie</option>
+            <option value="Administracja">Administracja</option>
+            <option value="Inne">Inne</option>
+          </select>
+          <select id="tenantIssuePriority" aria-label="Pilność zgłoszenia">
+            <option value="normal">Normalne</option>
+            <option value="high">Pilne</option>
+            <option value="critical">Awaryjne</option>
+          </select>
+        </div>
+        <input id="tenantIssueRoom" placeholder="Pomieszczenie / miejsce, np. kuchnia, łazienka">
+        <textarea id="tenantIssueDescription" placeholder="Opisz problem dokładniej: od kiedy, objawy, co już sprawdzono"></textarea>
+        <label class="pi-tenant-check"><input id="tenantIssuePermission" type="checkbox"> Zgadzam się na wejście serwisu po wcześniejszym kontakcie</label>
+        <input id="tenantIssuePhoto" type="file" accept="image/*">
+        <button onclick="tenantSubmitIssueV54()">Wyślij zgłoszenie</button>
+        <div id="tenantIssueMsg" class="pi-tenant-muted"></div>
+      </div>
+      <div class="pi-tenant-card pi-tenant-card-history">
+        <div class="pi-tenant-card-title">Historia zgłoszeń</div>
+        <div id="tenantPortalIssues" class="pi-tenant-issue-list">Ładowanie...</div>
+      </div>
+      <div class="pi-tenant-card pi-tenant-card-docs">
+        <div class="pi-tenant-card-title">Dokumenty najemcy</div>
+        <div id="tenantPortalDocs">Ładowanie...</div>
+      </div>
+      <div class="pi-tenant-card pi-tenant-card-meters">
+        <div class="pi-tenant-card-title">Odczyty liczników</div>
+        <div class="pi-tenant-muted" style="margin-bottom:10px;">Wpisz aktualne stany liczników. Odczyt trafi do właściciela i zostanie zapisany w historii mieszkania.</div>
+        <div class="pi-meter-grid">
+          <input id="tenantMeterElectricity" inputmode="decimal" placeholder="Prąd">
+          <input id="tenantMeterWater" inputmode="decimal" placeholder="Woda">
+          <input id="tenantMeterGas" inputmode="decimal" placeholder="Gaz">
+        </div>
+        <input id="tenantMeterNote" placeholder="Notatka, opcjonalnie">
+        <button onclick="tenantSubmitMetersV55()">Zapisz odczyt</button>
+        <div id="tenantMeterMsg" class="pi-tenant-muted"></div>
+        <div id="tenantMeterHistory" class="pi-meter-history">Ładowanie historii...</div>
+      </div>
+      <div id="tenantPaymentAccountCardV561" class="pi-tenant-payment-account-card pi-tenant-card-wide hidden"></div>
+
+    </div>
+  </div>
+</div>
+
+<style id="tenantHistoryStyleV184">
+.pi-tenant-card-settlement-history{padding:0!important;overflow:hidden!important;border-color:#e7ddd2!important;box-shadow:0 18px 46px rgba(38,25,15,.07)!important}
+.pi-th-card-head{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:13px;padding:18px 20px;border-bottom:1px solid #eee3d8;background:linear-gradient(135deg,#fff 0%,#fff9f2 100%)}
+.pi-th-card-head .pi-tenant-card-title{margin:0 0 3px!important;font-size:18px!important;color:#17120f!important}
+.pi-th-card-head p{margin:0;color:#75685e;font-size:12px;line-height:1.4}
+.pi-th-card-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:15px;background:#1c1511;color:#e79253;font-size:21px;font-weight:950;box-shadow:0 10px 22px rgba(28,21,17,.16)}
+.pi-th-range{display:inline-flex;align-items:center;min-height:30px;padding:6px 11px;border:1px solid #ecd5c0;border-radius:999px;background:#fff5e9;color:#98501c;font-size:10px;font-weight:950;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+#tenantSettlementHistoryV180.pi-th-root{display:block!important;padding:14px;background:#f8f5f1;color:#201813}
+.pi-th-overview{display:grid;grid-template-columns:minmax(220px,.85fr) minmax(330px,1.25fr) minmax(230px,.9fr);gap:12px;margin-bottom:16px}
+.pi-th-current{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:148px;padding:17px;overflow:hidden;border-radius:18px;background:linear-gradient(145deg,#18120e,#302117);color:#fff;box-shadow:0 14px 30px rgba(28,19,12,.14)}
+.pi-th-current:after{content:"";position:absolute;right:-34px;bottom:-58px;width:145px;height:145px;border-radius:50%;background:rgba(211,112,40,.18)}
+.pi-th-current-top{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.pi-th-eyebrow{display:block;margin-bottom:5px;color:#dfa06f;font-size:9px;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
+.pi-th-current h3{margin:0;color:#fff;font-size:20px;line-height:1.1;text-transform:capitalize}
+.pi-th-current-status{display:inline-flex;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.1);color:#fff;font-size:9px;font-weight:950;white-space:nowrap}
+.pi-th-current-status.ok{background:rgba(34,197,94,.18);color:#b9f6cf}.pi-th-current-status.warn{background:rgba(245,158,11,.18);color:#ffd69a}.pi-th-current-status.bad{background:rgba(239,68,68,.2);color:#ffc2bc}
+.pi-th-current-value{position:relative;z-index:1;margin-top:18px}
+.pi-th-current-value span{display:block;margin-bottom:4px;color:#cfc4bb;font-size:10px;font-weight:800}
+.pi-th-current-value strong{display:block;color:#fff;font-size:25px;font-weight:950;letter-spacing:-.035em}
+.pi-th-current-value small{display:block;margin-top:4px;color:#d7cbc2;font-size:10px}
+.pi-th-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pi-th-kpi{display:flex;min-width:0;flex-direction:column;justify-content:center;padding:14px;border:1px solid #e8ddd2;border-radius:17px;background:#fff;box-shadow:0 7px 18px rgba(42,29,19,.035)}
+.pi-th-kpi span{display:block;margin-bottom:7px;color:#8b7c70;font-size:9px;font-weight:950;letter-spacing:.07em;text-transform:uppercase}
+.pi-th-kpi strong{display:block;overflow:hidden;color:#211914;font-size:16px;font-weight:950;white-space:nowrap;text-overflow:ellipsis}
+.pi-th-kpi small{display:block;margin-top:5px;color:#91847a;font-size:9px;line-height:1.35}
+.pi-th-kpi.ok strong{color:#167147}.pi-th-kpi.warn strong{color:#b45b0b}.pi-th-kpi.bad strong{color:#b91c1c}
+.pi-th-progress-card{display:flex;flex-direction:column;justify-content:center;padding:16px;border:1px solid #e8ddd2;border-radius:18px;background:linear-gradient(145deg,#fff,#fffaf5);box-shadow:0 7px 18px rgba(42,29,19,.035)}
+.pi-th-progress-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.pi-th-progress-head span{color:#75685e;font-size:10px;font-weight:900}.pi-th-progress-head b{color:#211914;font-size:18px;font-weight:950}
+.pi-th-progress-track{height:9px;overflow:hidden;border-radius:999px;background:#eee6de}
+.pi-th-progress-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#c86422,#e99b61);box-shadow:0 3px 10px rgba(200,100,34,.22)}
+.pi-th-progress-meta{display:flex;justify-content:space-between;gap:10px;margin-top:10px;color:#8b7d72;font-size:9px}.pi-th-progress-meta b{color:#4b3c31}
+.pi-th-list-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:0 2px 9px}
+.pi-th-list-head b{display:block;color:#211914;font-size:13px}.pi-th-list-head small{display:block;margin-top:2px;color:#8a7d72;font-size:10px}
+.pi-th-count{display:inline-flex;padding:5px 9px;border-radius:999px;background:#eee7df;color:#77695e;font-size:9px;font-weight:950}
+.pi-th-month-list{display:flex;flex-direction:column;gap:7px;overflow:visible}
+.pi-th-month-list::-webkit-scrollbar{width:8px}.pi-th-month-list::-webkit-scrollbar-thumb{border:2px solid #f8f5f1;border-radius:999px;background:#d4c1b0}
+.pi-th-row{display:block!important;flex:0 0 auto!important;width:100%!important;margin:0!important;padding:0!important;overflow:hidden!important;border:1px solid #e6dcd2!important;border-radius:15px!important;background:#fff!important;box-shadow:none!important}
+.pi-th-row[open]{border-color:#d8b18e!important;box-shadow:0 10px 24px rgba(146,76,27,.07)!important}
+.pi-th-row>summary{position:relative;display:grid!important;grid-template-columns:minmax(175px,1.2fr) repeat(3,minmax(100px,.7fr)) auto 20px!important;align-items:center!important;gap:13px!important;min-height:64px!important;padding:10px 14px!important;cursor:pointer!important;list-style:none!important;color:#201813!important}
+.pi-th-row>summary::-webkit-details-marker{display:none!important}.pi-th-row>summary::marker{content:""}
+.pi-th-period{display:flex;align-items:center;gap:10px;min-width:0}.pi-th-period-dot{flex:0 0 auto;width:9px;height:9px;border:3px solid #fff;border-radius:50%;background:#20a25a;box-shadow:0 0 0 1px #b9dec8}.pi-th-row.warn .pi-th-period-dot{background:#d97706;box-shadow:0 0 0 1px #f0c88d}.pi-th-row.bad .pi-th-period-dot{background:#dc2626;box-shadow:0 0 0 1px #efb3b3}
+.pi-th-period b{display:block!important;margin:0 0 2px!important;color:#211914!important;font-size:13px!important;font-weight:950!important;text-transform:capitalize}.pi-th-period small{display:block!important;margin:0!important;color:#8b7d72!important;font-size:9px!important;white-space:nowrap}
+.pi-th-metric{min-width:0;padding-left:11px;border-left:1px solid #eee6df}.pi-th-metric span{display:block;margin-bottom:3px;color:#8b7d72;font-size:8px;font-weight:950;letter-spacing:.06em;text-transform:uppercase}.pi-th-metric strong{display:block;overflow:hidden;color:#211914;font-size:12px;font-weight:950;white-space:nowrap;text-overflow:ellipsis}
+.pi-th-row.ok .pi-th-balance strong{color:#167147}.pi-th-row.warn .pi-th-balance strong{color:#b45b0b}.pi-th-row.bad .pi-th-balance strong{color:#b91c1c}
+.pi-th-badge{display:inline-flex;align-items:center;justify-content:center;min-height:25px;padding:5px 9px;border-radius:999px;background:#eaf8f0;color:#17683f;font-size:8px;font-weight:950;line-height:1.1;text-align:center;white-space:nowrap}.pi-th-badge.warn{background:#fff1dc;color:#a5500b}.pi-th-badge.bad{background:#fee9e7;color:#a51d15}
+.pi-th-chevron{display:block;width:8px;height:8px;margin-top:-4px;border-right:2px solid #9a5a2d;border-bottom:2px solid #9a5a2d;transform:rotate(45deg);transition:.18s}.pi-th-row[open] .pi-th-chevron{margin-top:4px;transform:rotate(225deg)}
+.pi-th-row:not([open])>.pi-th-details{display:none!important}.pi-th-row[open]>.pi-th-details{display:block!important}.pi-th-details{border-top:1px solid #eee3da;background:#fbf8f4}.pi-th-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:11px 14px 13px}.pi-th-detail-grid section{min-width:0;padding:11px;border:1px solid #ebe1d8;border-radius:12px;background:#fff}
+.pi-th-detail-title{margin-bottom:7px;color:#8a776a;font-size:8px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}.pi-th-components,.pi-th-payments{display:flex;flex-direction:column;gap:5px}.pi-th-component,.pi-th-payment{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 8px;border-radius:8px;background:#faf6f2;color:#65584e;font-size:9px}.pi-th-component b,.pi-th-payment b{color:#211914;font-size:10px;white-space:nowrap}.pi-th-empty{padding:7px;color:#8d7f74;font-size:9px}
+@media(max-width:980px){.pi-th-overview{grid-template-columns:1fr 1.3fr}.pi-th-progress-card{grid-column:1/-1}.pi-th-row>summary{grid-template-columns:minmax(150px,1.2fr) repeat(3,minmax(85px,.7fr)) auto 18px!important}}
+@media(max-width:760px){.pi-th-card-head{grid-template-columns:40px minmax(0,1fr);padding:15px}.pi-th-card-icon{width:40px;height:40px;border-radius:13px}.pi-th-range{grid-column:1/-1;justify-self:start}.pi-th-overview{grid-template-columns:1fr}.pi-th-progress-card{grid-column:auto}.pi-th-row>summary{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px 7px!important;padding:12px 34px 12px 12px!important}.pi-th-period{grid-column:1/3}.pi-th-badge{grid-column:3;grid-row:1;justify-self:end;white-space:normal}.pi-th-metric{padding:7px 5px 0;border-top:1px solid #eee6df;border-left:0}.pi-th-chevron{position:absolute;right:13px;top:50%}.pi-th-detail-grid{grid-template-columns:1fr}.pi-th-month-list{max-height:none}}
+@media(max-width:480px){#tenantSettlementHistoryV180.pi-th-root{padding:9px}.pi-th-kpis{grid-template-columns:1fr}.pi-th-current{min-height:132px}.pi-th-kpi{padding:11px}.pi-th-card-head p{font-size:11px}.pi-th-list-head{align-items:flex-start}.pi-th-current-value strong{font-size:22px}.pi-th-metric strong{font-size:10px}.pi-th-badge{font-size:7px}}
+</style>
+<style id="tenantHistoryFitV186">
+.pi-tenant-card-settlement-history{width:100%!important;max-width:100%!important;min-width:0!important;padding:18px!important;overflow:hidden!important;box-sizing:border-box!important}
+#tenantSettlementHistoryV180{width:100%!important;max-width:100%!important;min-width:0!important;margin-top:12px!important;overflow:hidden!important;box-sizing:border-box!important}
+#tenantSettlementHistoryV180 *,#tenantSettlementHistoryV180 *:before,#tenantSettlementHistoryV180 *:after{box-sizing:border-box}
+#tenantSettlementHistoryV180 .pi-th-overview{width:100%;max-width:100%;min-width:0;grid-template-columns:minmax(0,.86fr) minmax(0,1.2fr) minmax(0,.92fr);gap:10px}
+#tenantSettlementHistoryV180 .pi-th-current,#tenantSettlementHistoryV180 .pi-th-kpis,#tenantSettlementHistoryV180 .pi-th-progress-card{min-width:0;max-width:100%}
+#tenantSettlementHistoryV180 .pi-th-current{padding:15px}
+#tenantSettlementHistoryV180 .pi-th-kpis{gap:7px}
+#tenantSettlementHistoryV180 .pi-th-kpi{min-width:0;padding:11px}
+#tenantSettlementHistoryV180 .pi-th-kpi strong{font-size:14px}
+#tenantSettlementHistoryV180 .pi-th-progress-card{padding:14px}
+#tenantSettlementHistoryV180 .pi-th-row>summary{grid-template-columns:minmax(135px,1.1fr) repeat(3,minmax(68px,.68fr)) auto 16px!important;gap:8px!important;padding:9px 11px!important}
+#tenantSettlementHistoryV180 .pi-th-metric{min-width:0;padding-left:8px}
+#tenantSettlementHistoryV180 .pi-th-metric strong{font-size:11px}
+#tenantSettlementHistoryV180 .pi-th-badge{max-width:100%;padding:5px 8px;white-space:normal}
+@media(max-width:1060px){
+  #tenantSettlementHistoryV180 .pi-th-overview{grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr)}
+  #tenantSettlementHistoryV180 .pi-th-progress-card{grid-column:1/-1}
+}
+@media(max-width:760px){
+  .pi-tenant-card-settlement-history{padding:14px!important}
+  #tenantSettlementHistoryV180 .pi-th-overview{grid-template-columns:1fr}
+  #tenantSettlementHistoryV180 .pi-th-progress-card{grid-column:auto}
+  #tenantSettlementHistoryV180 .pi-th-row>summary{grid-template-columns:repeat(3,minmax(0,1fr))!important;padding:11px 30px 11px 11px!important}
+}
+</style>
+<script id="tenantHistoryInlineV181">
+(function(){
+  const STORE_KEY='piTenantSessionV54';
+  const MULTI_STORE_KEY='piTenantMultiSessionV551';
+  const BOX_ID='tenantSettlementHistoryV180';
+  let activeData=null;
+  let lastSignature='';
+  const months=['styczeń','luty','marzec','kwiecień','maj','czerwiec','lipiec','sierpień','wrzesień','październik','listopad','grudzień'];
+  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const money=value=>Number(value||0).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł';
+  const monthKey=row=>{
+    const explicit=String(row?.settlement_month||'').slice(0,7);
+    if(/^\d{4}-\d{2}$/.test(explicit))return explicit;
+    const marker=String(row?.note||'').match(/\[\[(?:PI:SETTLEMENT_MONTH=|PI_SETTLEMENT_MONTH:)(\d{4}-\d{2})\]\]/i);
+    if(marker)return marker[1];
+    const match=String(row?.payment_date||row?.date||row?.created_at||'').match(/^(\d{4})-(\d{2})/);
+    return match?match[1]+'-'+match[2]:'';
+  };
+  const dateLabel=row=>{
+    const match=String(row?.payment_date||row?.date||row?.created_at||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return match?match[3]+'.'+match[2]+'.'+match[1]:'bez daty';
+  };
+  function fallbackRows(data){
+    const property=data.property||{};
+    const payments=Array.isArray(data.payments)?data.payments:[];
+    const now=new Date();
+    const due=Math.max(0,Number(property.rent_amount||0));
+    const leaseStart=String(property.lease_start||'').slice(0,7);
+    const rows=[];
+    for(let offset=0;offset<12;offset++){
+      const date=new Date(now.getFullYear(),now.getMonth()-offset,1);
+      const key=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0');
+      if(/^\d{4}-\d{2}$/.test(leaseStart)&&key<leaseStart)continue;
+      const monthPayments=payments.filter(item=>monthKey(item)===key);
+      const paid=monthPayments.reduce((sum,item)=>sum+Number(item.amount||0),0);
+      const arrears=Math.max(0,due-paid);
+      const overpayment=Math.max(0,paid-due);
+      rows.push({
+        key,totalDue:due,tenantDue:due,paid,arrears,overpayment,
+        status:due<=0.009&&paid<=0.009?'Brak danych':(arrears>0.009?(paid>0.009?'Niepełna płatność':'Brak wpłaty'):(overpayment>0.009?'Nadpłata':'Opłacone')),
+        tone:arrears>0.009?'warn':'ok',
+        dueRows:due>0.009?[{label:'Miesięczna należność',amount:due}]:[],
+        payments:monthPayments
+      });
+    }
+    return rows;
+  }
+  function renderRows(box,rows){
+    if(!rows.length){
+      box.innerHTML='<div class="pi-tenant-muted">Brak zapisanych rozliczeń historycznych.</div>';
+      return;
+    }
+    const visible=rows.slice(0,12);
+    const labelFor=row=>{
+      const key=String(row?.key||row?.month||'');
+      const match=key.match(/^(\d{4})-(\d{2})$/);
+      return match?(months[Number(match[2])-1]+' '+match[1]):key;
+    };
+    const latest=visible[0]||{};
+    const latestDue=Number(latest.periodDue??latest.tenantDue??latest.baseDue??latest.totalDue??0);
+    const latestPaid=Number(latest.periodPaidAtClose??latest.settledAmount??latest.paid??0);
+    const latestArrears=Math.max(0,Number(latest.periodMissingAtClose??latest.openAmount??Math.max(0,latestDue-latestPaid)));
+    const latestOverpayment=Math.max(0,Number(latest.periodOverpaymentAtClose??Math.max(0,latestPaid-latestDue)));
+    const latestTone=latestArrears>0.009?'warn':'ok';
+    const latestStatus=latestDue<=0.009&&latestPaid<=0.009?'Brak danych':(latestArrears>0.009?(latestPaid>0.009?'Niepełna płatność':'Brak wpłaty'):(latestOverpayment>0.009?'Nadpłata':'Opłacone'));
+    const latestProgress=latestDue>0.009?Math.max(0,Math.min(100,Math.round((latestPaid/latestDue)*100))):(latestPaid>0?100:0);
+    const focusLabel=latestArrears>0.009?'Do zapłaty':(latestOverpayment>0.009?'Nadpłata':'Wpłacono');
+    const focusAmount=latestArrears>0.009?latestArrears:(latestOverpayment>0.009?latestOverpayment:latestPaid);
+    const monthRows=visible.map(row=>{
+      const due=Number(row.periodDue??row.tenantDue??row.baseDue??row.totalDue??0);
+      const paid=Number(row.periodPaidAtClose??row.settledAmount??row.paid??0);
+      const arrears=Math.max(0,Number(row.periodMissingAtClose??row.openAmount??Math.max(0,due-paid)));
+      const overpayment=Math.max(0,Number(row.periodOverpaymentAtClose??Math.max(0,paid-due)));
+      const tone=arrears>0.009?'warn':'ok';
+      const status=due<=0.009&&paid<=0.009?'Brak danych':(arrears>0.009?(paid>0.009?'Niepełna płatność':'Brak wpłaty'):(overpayment>0.009?'Nadpłata':'Opłacone'));
+      const balanceLabel=arrears>0.009?'Pozostało':(overpayment>0.009?'Nadpłata':'Saldo');
+      const balanceAmount=arrears>0.009?arrears:overpayment;
+      const components=(Array.isArray(row.dueRows)?row.dueRows:[]).map(item=>'<div class="pi-th-component"><span>'+esc(item.label||'Należność')+'</span><b>'+money(item.amount||0)+'</b></div>').join('');
+      const payments=(Array.isArray(row.payments)?row.payments:[]).map(item=>'<div class="pi-th-payment"><span>'+esc(dateLabel(item))+'</span><b>'+money(item.amount||0)+'</b></div>').join('');
+      const meta=row.dueDateLabel?('Termin '+row.dueDateLabel):(arrears>0.009?'Wymaga uzupełnienia':'Rozliczone');
+      return '<details class="pi-th-row '+tone+'"><summary>'+
+        '<div class="pi-th-period"><span class="pi-th-period-dot"></span><div><b>'+esc(labelFor(row))+'</b><small>'+esc(meta)+'</small></div></div>'+
+        '<div class="pi-th-metric"><span>Należne</span><strong>'+money(due)+'</strong></div>'+
+        '<div class="pi-th-metric"><span>Wpłacono</span><strong>'+money(paid)+'</strong></div>'+
+        '<div class="pi-th-metric pi-th-balance"><span>'+esc(balanceLabel)+'</span><strong>'+money(balanceAmount)+'</strong></div>'+
+        '<span class="pi-th-badge '+tone+'">'+esc(status)+'</span><span class="pi-th-chevron" aria-hidden="true"></span></summary>'+
+        '<div class="pi-th-details"><div class="pi-th-detail-grid">'+
+          '<section><div class="pi-th-detail-title">Skład należności</div><div class="pi-th-components">'+
+            (components||'<div class="pi-th-empty">Brak składników należności.</div>')+
+          '</div></section>'+
+          '<section><div class="pi-th-detail-title">Zaksięgowane wpłaty</div><div class="pi-th-payments">'+
+            (payments||'<div class="pi-th-empty">Brak wpłaty w tym miesiącu.</div>')+
+          '</div></section>'+
+        '</div></div></details>';
+    }).join('');
+    box.innerHTML=
+      '<div class="pi-th-overview">'+
+        '<section class="pi-th-current '+latestTone+'"><div class="pi-th-current-top"><div><span class="pi-th-eyebrow">Bieżący miesiąc</span><h3>'+esc(labelFor(latest))+'</h3></div><span class="pi-th-current-status '+latestTone+'">'+esc(latestStatus)+'</span></div>'+
+          '<div class="pi-th-current-value"><span>'+esc(focusLabel)+'</span><strong>'+money(focusAmount)+'</strong><small>'+(latestArrears>0.009?'Kwota pozostała do pełnego rozliczenia':'Miesiąc jest rozliczony')+'</small></div></section>'+
+        '<div class="pi-th-kpis"><div class="pi-th-kpi"><span>Należne</span><strong>'+money(latestDue)+'</strong><small>Łączna kwota za miesiąc</small></div>'+
+          '<div class="pi-th-kpi ok"><span>Wpłacono</span><strong>'+money(latestPaid)+'</strong><small>Zaksięgowane wpłaty</small></div>'+
+          '<div class="pi-th-kpi '+latestTone+'"><span>Saldo</span><strong>'+money(latestArrears||latestOverpayment)+'</strong><small>'+(latestArrears>0.009?'Pozostało do zapłaty':(latestOverpayment>0.009?'Nadpłata':'Brak różnicy'))+'</small></div></div>'+
+        '<section class="pi-th-progress-card"><div class="pi-th-progress-head"><span>Pokrycie należności</span><b>'+latestProgress+'%</b></div><div class="pi-th-progress-track"><i style="width:'+latestProgress+'%"></i></div>'+
+          '<div class="pi-th-progress-meta"><span>Wpłacono <b>'+money(latestPaid)+'</b></span><span>z <b>'+money(latestDue)+'</b></span></div></section>'+
+      '</div>'+
+      '<div class="pi-th-list-head"><div><b>Historia miesięcy</b><small>Kliknij wybrany miesiąc, aby zobaczyć szczegóły.</small></div><span class="pi-th-count">'+visible.length+' mies.</span></div>'+
+      '<div class="pi-th-month-list">'+monthRows+'</div>';
+    box.dataset.historyReady='true';
+    box.dataset.historyUi='v184';
+    const detailsRows=typeof box.querySelectorAll==='function'?Array.from(box.querySelectorAll('details.pi-th-row')):[];
+    detailsRows.forEach(details=>{
+      const summary=details.querySelector('summary');
+      if(summary) summary.setAttribute('aria-expanded',details.open?'true':'false');
+      details.addEventListener('toggle',()=>{
+        if(summary) summary.setAttribute('aria-expanded',details.open?'true':'false');
+        if(details.open){
+          detailsRows.forEach(other=>{ if(other!==details && other.open) other.open=false; });
+        }
+      });
+    });
+  }
+  function storedData(){
+    try{
+      const direct=JSON.parse(sessionStorage.getItem(STORE_KEY)||'null');
+      if(direct&&direct.property)return direct;
+    }catch(_){}
+    try{
+      const multi=JSON.parse(sessionStorage.getItem(MULTI_STORE_KEY)||'null');
+      const sessions=multi&&Array.isArray(multi.sessions)?multi.sessions:[];
+      if(sessions.length===1&&sessions[0]?.property)return sessions[0];
+      const lastId=String(sessionStorage.getItem('piTenantLastPropertyIdV552')||'');
+      if(lastId){
+        const selected=sessions.find(item=>String(item?.property?.id||'')===lastId);
+        if(selected?.property)return selected;
+      }
+    }catch(_){}
+    return null;
+  }
+  function render(providedData){
+    const box=document.getElementById(BOX_ID);
+    if(!box)return;
+    if(providedData&&providedData.property)activeData=providedData;
+    const data=activeData||storedData();
+    if(!data||!data.property){
+      if(document.body?.classList?.contains('tenant-mode')){
+        box.innerHTML='<div class="pi-tenant-muted">Oczekuję na dane wybranego mieszkania…</div>';
+      }
+      return;
+    }
+    const dataPayments=Array.isArray(data.payments)?data.payments:[];
+    const dataExpenses=Array.isArray(data.expenses)?data.expenses:[];
+    const latestPayment=dataPayments[0]||{};
+    const signature=[
+      data.property.id||data.property.name||'property',
+      dataPayments.length,
+      latestPayment.id||latestPayment.payment_date||latestPayment.created_at||'',
+      latestPayment.amount||'',
+      dataExpenses.length,
+      Array.isArray(data.settlementHistory)?data.settlementHistory.map(row=>[row.key,row.periodDue,row.periodPaidAtClose,row.periodMissingAtClose,row.tenantDue,row.paid].join(':')).join(','):''
+    ].join('|');
+    if(box.dataset.historyReady==='true'&&signature===lastSignature&&String(box.innerHTML||'').includes('pi-th-overview'))return;
+    let rows=Array.isArray(data.settlementHistory)?data.settlementHistory.slice(-12).reverse():[];
+    try{
+      const engine=window.PureInvestSettlementEngine;
+      if(!rows.length&&engine&&typeof engine.propertyHistory==='function'){
+        const calculated=engine.propertyHistory(data.property,typeof engine.currentMonth==='function'?engine.currentMonth():new Date().toISOString().slice(0,7),Array.isArray(data.payments)?data.payments:[],Array.isArray(data.expenses)?data.expenses:[]);
+        if(Array.isArray(calculated))rows=calculated.slice(-12).reverse();
+      }
+    }catch(_){}
+    renderRows(box,rows.length?rows:fallbackRows(data));
+    lastSignature=signature;
+  }
+  window.piTenantHistoryInlineV181=render;
+  render();
+  document.addEventListener('DOMContentLoaded',render);
+  window.addEventListener('pageshow',render);
+  setTimeout(render,300);
+})();
+</script>
+<script src="js/modules/tenant-portal.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/tenant-manager.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/access-security.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/access-roles.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/access-edit.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/roi-tax.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/library-pro.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/gmail-costs.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/version-state.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/property-save.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/properties-manager.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/panel-core.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/finance-core.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/transactions.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/finance-dashboard-metrics.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/dashboard-core.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/owner-compatibility.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/storage-hardening.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/release-closure.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/tickets.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/final-qa-ui.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/os-beta.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/dashboard-stability.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/remove-property-doc-badge.js?v=2026-09-23-startup-hotfix-v1924"></script>
+
+<script src="js/modules/os11-stability-diagnostics.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/os15-stabilization.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/production-hardening.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/transaction-type-manager.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/tax-policy-owner-rent.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/arrears-engine.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/fee-meter-bridge.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/fee-breakdowns.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/fee-accordion.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/navigation-guard.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/finance-section-reorg.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/rent-autopilot.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/startup.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/tenancy-sync.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/modules/a11y-final.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script id="tenantHistoryBridgeV182">
+(function(){
+  const callHistory=data=>{
+    try{
+      if(typeof window.piTenantHistoryInlineV181==='function'){
+        window.piTenantHistoryInlineV181(data&&data.property?data:undefined);
+      }
+    }catch(error){
+      console.warn('PUREINVEST_TENANT_HISTORY_BRIDGE_WARN',error);
+    }
+  };
+  const wrap=name=>{
+    const original=window[name];
+    if(typeof original!=='function'||original.__piTenantHistoryBridgeV182)return;
+    const wrapped=function(data){
+      try{
+        return original.apply(this,arguments);
+      }finally{
+        callHistory(data);
+      }
+    };
+    wrapped.__piTenantHistoryBridgeV182=true;
+    window[name]=wrapped;
+  };
+  const connect=()=>{
+    wrap('showTenantPortalV54');
+    wrap('renderTenantPortalV54');
+    callHistory();
+  };
+  connect();
+  document.addEventListener('DOMContentLoaded',connect);
+  window.addEventListener('pageshow',connect);
+  window.addEventListener('focus',()=>callHistory());
+  window.addEventListener('storage',event=>{
+    if(['piTenantSessionV54','piTenantMultiSessionV551','piTenantLastPropertyIdV552'].includes(event.key))callHistory();
+  });
+  if(typeof MutationObserver==='function'){
+    const observer=new MutationObserver(()=>callHistory());
+    if(document.body)observer.observe(document.body,{attributes:true,attributeFilter:['class']});
+    const screen=document.getElementById('tenantPortalScreen');
+    if(screen)observer.observe(screen,{attributes:true,attributeFilter:['class']});
+  }
+  let attempts=0;
+  const timer=setInterval(()=>{
+    connect();
+    attempts+=1;
+    if(attempts>=20)clearInterval(timer);
+  },500);
+})();
+</script>
+  <script src="assets/js/pi-transactions-compact-1.9.22.js" defer data-pi-patch="1.9.22-transactions"></script>
+</body>
+</html>

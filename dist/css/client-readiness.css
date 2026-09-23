@@ -1,0 +1,64 @@
+/* PureInvest OS 1.9.21 — shared visual polish, preserving the existing theme. */
+body.pi-client-ready{--primary:#b95725;--primary2:#ce702d;--border:#e6dfd6;--muted:#696158}
+.pi-client-ready #appScreen .card{border-radius:18px;box-shadow:0 6px 20px rgb(42 29 16 / 4%)}
+.pi-client-ready #appScreen .card-title{font-size:18px;line-height:1.35;font-weight:700;letter-spacing:-.25px}
+.pi-client-ready #appScreen .kpi{border-radius:17px;padding:18px}
+.pi-client-ready #appScreen .kpi-label{font-size:12px;text-transform:none;letter-spacing:0}
+.pi-client-ready #appScreen .kpi-value{font-size:27px;font-variant-numeric:tabular-nums}
+.pi-client-ready #appScreen .sidebar .nav{gap:6px}
+.pi-client-ready #appScreen .sidebar .nav-item{padding:12px 14px;border-radius:10px;font-size:13px}
+.pi-client-ready #appScreen .sidebar-logo{margin-bottom:28px}
+.pi-client-ready #appScreen .pi-command-admin-toggles{gap:8px}
+.pi-client-ready #appScreen .pi-command-admin-toggles .pi-admin-tab-btn{width:auto;min-height:42px;padding:10px 15px;border-radius:10px}
+.pi-client-ready #appScreen .pi-command-admin-toggles [onclick*="piDashboardPaymentCollapse"]{background:var(--primary);color:#fff}
+.pi-client-ready #welcomeScreen .tile{min-height:176px;padding:22px;border-radius:22px;box-shadow:0 12px 24px rgb(25 23 20 / 11%)}
+.pi-client-ready #welcomeScreen .tile:hover{transform:translateY(-3px)}
+.pi-client-ready #welcomeScreen .tile h3{font-size:24px;margin:16px 0 8px}
+.pi-client-ready #welcomeScreen .welcome-title{font-size:36px}
+.pi-client-ready #welcomeScreen .welcome-sub{font-size:16px;margin-bottom:24px}
+.pi-client-ready #appScreen :is(.pi-fee-kpi,.v7-pro-card){border-radius:15px;padding:17px}
+.pi-client-ready #appScreen :is(.pi-fee-kpi,.v7-pro-card)>span{font-size:12px}
+.pi-client-ready #appScreen :is(.pi-fee-kpi,.v7-pro-card)>b{font-variant-numeric:tabular-nums}
+.pi-client-ready #appScreen .pi-fee-toolbar{gap:14px}
+.pi-client-ready #appScreen .pi-fee-save-status{font-size:12px}
+.pi-client-ready #appScreen #piFeeDraftRecovery[hidden]{display:none}
+.pi-client-ready #appScreen #piFeeDraftRecovery button{width:auto;margin:6px 6px 0 0}
+.pi-client-ready #appScreen .pi-media-table-wrap{max-height:none;overflow:visible}
+.pi-client-ready #appScreen .pi-media-table{width:100%;min-width:0;display:block;border:0}
+.pi-client-ready #appScreen .pi-media-table thead{display:none}
+.pi-client-ready #appScreen .pi-media-table tbody{display:grid;gap:16px}
+.pi-client-ready #appScreen .pi-media-table tr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:18px;border:1px solid var(--border);border-radius:15px;background:#fff}
+.pi-client-ready #appScreen .pi-media-table td{display:block;min-width:0;width:auto;padding:0;border:0;background:transparent}
+.pi-client-ready #appScreen .pi-media-table td::before{content:attr(data-label);display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.pi-client-ready #appScreen .pi-media-table td:first-child{display:none}
+.pi-client-ready #appScreen .pi-media-table td:nth-child(2){grid-column:span 2}
+.pi-client-ready #appScreen .pi-media-table td:last-child{display:flex;align-items:flex-end;justify-content:flex-end}
+.pi-client-ready #appScreen .pi-media-table :is(input,select){min-width:0;width:100%;margin:0;min-height:42px;font-size:14px;border-radius:9px}
+.pi-client-ready #appScreen .pi-media-table output{min-width:0;min-height:42px;display:flex;align-items:center;justify-content:flex-start;white-space:normal;text-align:left;font-weight:700;font-size:14px}
+.pi-client-ready #appScreen .pi-media-table [data-media-remove]{min-height:42px;min-width:42px;margin:0}
+.pi-client-ready #appScreen .pi-media-summary{gap:12px}
+.pi-client-ready #appScreen .pi-media-summary>div{border-radius:13px}
+.pi-client-ready #appScreen .pi-media-summary b{font-size:22px;font-variant-numeric:tabular-nums}
+.pi-client-ready .pi-action-dialog{margin:auto;width:min(660px,calc(100vw - 32px));max-height:calc(100dvh - 48px);overflow:auto;padding:24px;border:1px solid var(--border);border-radius:19px;background:#fff;color:var(--text);box-shadow:0 24px 80px rgb(0 0 0 / 24%)}
+.pi-client-ready .pi-action-dialog::backdrop{background:rgb(15 15 15 / 50%)}
+.pi-client-ready .pi-action-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.pi-client-ready .pi-action-dialog-head h2{font-size:23px;font-weight:700;letter-spacing:-.5px}
+.pi-client-ready .pi-action-dialog-head p{font-size:13px;color:var(--muted);margin-top:5px}
+.pi-client-ready .pi-action-dialog-close{width:36px;min-width:36px;min-height:36px;padding:4px;margin:0;font-size:23px;background:#f4f1ec;color:#4b4138;border-radius:9px}
+.pi-client-ready #appScreen .pi-action-dialog .card{margin:0;padding:0;border:0;box-shadow:none;border-radius:0}
+.pi-client-ready #appScreen .pi-action-dialog .card-title{display:none}
+.pi-client-ready .pi-action-dialog .pi-command-collapse{margin:16px 0 0}
+.pi-client-ready .pi-action-dialog :is(input,select,textarea){border-radius:9px;min-height:42px;font-size:16px}
+.pi-client-ready .pi-action-dialog label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:13px}
+.pi-client-ready .pi-action-dialog label :is(input,select,textarea){margin-top:6px}
+.pi-client-ready #appScreen .pi-form-label{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:10px}
+.pi-client-ready #appScreen .pi-context-warning{padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;background:#fbf4eb;margin-bottom:14px}
+@media(max-width:700px){
+  .pi-client-ready #appScreen .pi-media-table tr{grid-template-columns:repeat(2,minmax(0,1fr));padding:14px;gap:12px}
+  .pi-client-ready #appScreen .pi-command-admin-toggles{display:flex;flex-wrap:wrap}
+  .pi-client-ready #appScreen .pi-command-admin-toggles .pi-admin-tab-btn{flex:1 1 135px;width:auto}
+  .pi-client-ready #appScreen .pi-media-table :is(input,select){font-size:16px}
+  .pi-client-ready .pi-action-dialog{padding:18px;width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}
+  .pi-client-ready #appScreen .pi-media-summary{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){.pi-client-ready #welcomeScreen .tile{transition:none}.pi-client-ready #welcomeScreen .tile:hover{transform:none}}

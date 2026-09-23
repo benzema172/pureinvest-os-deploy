@@ -1,0 +1,90 @@
+/* PureInvest OS 1.9.22 — compact recent transactions */
+#transactionsDashboard .transaction,
+#transactionsDashboard .transaction-item,
+#transactionsDashboard [data-transaction-id],
+#transactionsDashboard .pi-transaction-compact {
+  position: relative !important;
+  min-height: 0 !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  padding-right: 150px !important;
+  align-items: start !important;
+  column-gap: 12px !important;
+}
+
+#transactionsDashboard .transaction > :first-child,
+#transactionsDashboard .transaction-item > :first-child,
+#transactionsDashboard [data-transaction-id] > :first-child,
+#transactionsDashboard .pi-transaction-compact > :first-child {
+  min-width: 0 !important;
+}
+
+#transactionsDashboard .actions,
+#transactionsDashboard .pi-transaction-actions {
+  position: absolute !important;
+  top: 39px !important;
+  right: 0 !important;
+  z-index: 2 !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+#transactionsDashboard .actions button,
+#transactionsDashboard .pi-transaction-actions button {
+  width: auto !important;
+  min-width: 56px !important;
+  min-height: 30px !important;
+  height: 30px !important;
+  padding: 5px 10px !important;
+  margin: 0 !important;
+  border-radius: 10px !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+#transactionsDashboard .plus,
+#transactionsDashboard .minus,
+#transactionsDashboard .transaction-amount,
+#transactionsDashboard .pi-amount,
+#transactionsDashboard .pi-transaction-amount {
+  position: absolute !important;
+  top: 11px !important;
+  right: 0 !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+#transactionsDashboard .attachment-link,
+#transactionsDashboard .pi-attachment-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  margin-top: 5px !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+
+#transactionsDashboard [data-pi-dead-attachment="true"] {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  #transactionsDashboard .transaction,
+  #transactionsDashboard .transaction-item,
+  #transactionsDashboard [data-transaction-id],
+  #transactionsDashboard .pi-transaction-compact {
+    padding-right: 132px !important;
+  }
+
+  #transactionsDashboard .actions button,
+  #transactionsDashboard .pi-transaction-actions button {
+    min-width: 50px !important;
+    padding-inline: 8px !important;
+  }
+}
