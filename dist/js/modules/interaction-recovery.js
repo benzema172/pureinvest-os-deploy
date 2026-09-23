@@ -2,7 +2,7 @@
   if(window.__PI_INTERACTION_RECOVERY_1926__) return;
   window.__PI_INTERACTION_RECOVERY_1926__ = true;
 
-  const BUILD = window.PI_RELEASE?.build || '2026-09-23-interaction-recovery-v1926';
+  const BUILD = window.PI_RELEASE?.build || '2026-09-23-auth-runtime-stability-v1927';
   const $ = id => document.getElementById(id);
 
   function isAppVisible(){
@@ -82,53 +82,23 @@
     });
   }
 
-  async function clearLegacyPwaOnce(){
-    let done=false;
-    try{ done=localStorage.getItem('piInteractionRecoveryPwaBuild')===BUILD; }catch(_){ }
-    if(done) return false;
-    try{
-      if('serviceWorker' in navigator){
-        const regs=await navigator.serviceWorker.getRegistrations().catch(()=>[]);
-        await Promise.all((regs||[]).map(reg=>reg.unregister().catch(()=>false)));
-      }
-      if('caches' in window){
-        const keys=await caches.keys().catch(()=>[]);
-        await Promise.all((keys||[]).filter(k=>String(k).startsWith('pureinvest-')).map(k=>caches.delete(k).catch(()=>false)));
-      }
-      try{ localStorage.setItem('piInteractionRecoveryPwaBuild',BUILD); }catch(_){ }
-      return true;
-    }catch(error){
-      console.warn('PureInvest interaction recovery cache cleanup skipped:',error?.message||error);
-      try{ localStorage.setItem('piInteractionRecoveryPwaBuild',BUILD); }catch(_){ }
-      return false;
-    }
-  }
-
   function requiredRuntimeReady(){
     return typeof window.switchTab==='function' && typeof window.backToWelcome==='function' && typeof window.piCommandTogglePanel==='function';
   }
 
-  async function recover(){
+  function recover(){
     releaseStaleLayers();
     bindCriticalControls();
-    if(requiredRuntimeReady()) return;
-    let retried=false;
-    try{ retried=sessionStorage.getItem('piInteractionRecoveryReloaded')==='1'; }catch(_){ }
-    if(retried) return;
-    const cleared=await clearLegacyPwaOnce();
-    if(cleared){
-      try{ sessionStorage.setItem('piInteractionRecoveryReloaded','1'); }catch(_){ }
-      location.reload();
-    }
+    if(!requiredRuntimeReady()) console.warn('PureInvest: krytyczne kontrolery interfejsu nie są jeszcze gotowe.');
   }
 
   document.addEventListener('DOMContentLoaded',()=>{
-    clearLegacyPwaOnce().then(()=>recover());
+    recover();
     setTimeout(recover,250);
     setTimeout(recover,900);
   });
   window.addEventListener('pageshow',()=>setTimeout(recover,80));
   window.addEventListener('load',()=>setTimeout(recover,100));
   document.addEventListener('click',()=>releaseStaleLayers(),true);
-  window.piInteractionRecovery1926={recover,releaseStaleLayers,bindCriticalControls,requiredRuntimeReady};
+  window.piInteractionRecovery1927={recover,releaseStaleLayers,bindCriticalControls,requiredRuntimeReady};
 })();

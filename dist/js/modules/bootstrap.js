@@ -42,24 +42,27 @@ async function piRestoreNavigationHandoff(){
   try{
     if(handoff.kind==='friend' && handoff.payload){
       sessionStorage.setItem('piFriendSessionV1',JSON.stringify(handoff.payload));
+      try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ }
       return true;
     }
     if(handoff.kind==='owner' && handoff.payload){
       sessionStorage.setItem('piOwnerSessionV570',JSON.stringify(handoff.payload));
+      try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ }
       return true;
     }
     if(handoff.kind==='tenant' && handoff.payload){
       sessionStorage.setItem('piTenantSessionV54',JSON.stringify(handoff.payload));
+      try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ }
       return true;
     }
     if(handoff.kind==='supabase' && handoff.payload?.access_token && handoff.payload?.refresh_token && typeof db?.auth?.setSession==='function'){
       const result=await db.auth.setSession({access_token:handoff.payload.access_token,refresh_token:handoff.payload.refresh_token});
-      return !!result?.data?.session && !result?.error;
+      const restored=!!result?.data?.session && !result?.error;
+      if(restored){ try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ } }
+      return restored;
     }
   }catch(error){
     console.warn('PureInvest: nie udało się odtworzyć sesji po przejściu do aplikacji.',error?.message || error);
-  }finally{
-    try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ }
   }
   return false;
 }

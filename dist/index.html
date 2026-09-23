@@ -9,13 +9,48 @@
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="icon" href="/icons/icon-192.png" type="image/png" />
 <script>
-(()=>{const build='2026-09-23-interaction-recovery-v1926',key='piReleaseBootstrap';try{if(localStorage.getItem(key)===build)return;localStorage.setItem(key,build);if(!('caches' in window))return;caches.keys().then(keys=>{const old=keys.filter(name=>name.startsWith('pureinvest-'));return Promise.all(old.map(name=>caches.delete(name))).then(()=>{if(old.length)location.reload();});}).catch(()=>null);}catch(_){}})();
+(()=>{
+  const BUILD='2026-09-23-auth-runtime-stability-v1927';
+  const RESET_KEY='piSwResetV1927';
+  document.documentElement.classList.add('pi-runtime-resetting');
+  window.__PI_RUNTIME_READY__=(async()=>{
+    let hadLegacyRuntime=false;
+    try{
+      if('serviceWorker' in navigator){
+        const controller=!!navigator.serviceWorker.controller;
+        const regs=await navigator.serviceWorker.getRegistrations().catch(()=>[]);
+        hadLegacyRuntime=controller || (regs||[]).length>0;
+        await Promise.all((regs||[]).map(reg=>reg.unregister().catch(()=>false)));
+      }
+      if('caches' in window){
+        const keys=await caches.keys().catch(()=>[]);
+        const legacy=(keys||[]).filter(key=>String(key).startsWith('pureinvest-'));
+        hadLegacyRuntime=hadLegacyRuntime || legacy.length>0;
+        await Promise.all(legacy.map(key=>caches.delete(key).catch(()=>false)));
+      }
+    }catch(error){ console.warn('PureInvest runtime reset warning:',error?.message||error); }
+
+    let resetDone=false;
+    try{ resetDone=sessionStorage.getItem(RESET_KEY)===BUILD; }catch(_){ }
+    if(hadLegacyRuntime && !resetDone){
+      try{ sessionStorage.setItem(RESET_KEY,BUILD); }catch(_){ }
+      location.replace('/?pi_runtime_reset=1927');
+      return false;
+    }
+    try{ sessionStorage.removeItem(RESET_KEY); }catch(_){ }
+    document.documentElement.classList.remove('pi-runtime-resetting');
+    document.documentElement.classList.add('pi-runtime-ready');
+    return true;
+  })();
+})();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8" integrity="sha384-z2hqtpr/vSDZ8zSjLOiNgnR/mpU799AD93s6rvkNJLI6Hl0YlKXEhDtREzNT749S" crossorigin="anonymous"></script>
-<script src="js/version.js?v=2026-09-23-interaction-recovery-v1926"></script>
-<script src="js/config.js?v=2026-09-23-interaction-recovery-v1926"></script>
+<script src="js/version.js?v=2026-09-23-auth-runtime-stability-v1927"></script>
+<script src="js/config.js?v=2026-09-23-auth-runtime-stability-v1927"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+html.pi-runtime-resetting body{visibility:hidden!important;pointer-events:none!important;}
+
 :root{--bg:#f4f1ec;--card:#fff;--border:#e7dfd5;--text:#171717;--muted:#6b6258;--primary:#c56a26;--primary2:#e07a2d;--dark:#121212;}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100%;}
@@ -139,6 +174,7 @@ $('ownerTab').onclick=()=>mode('owner'); $('tenantTab').onclick=()=>mode('tenant
 
 $('ownerForm').addEventListener('submit',async e=>{
   e.preventDefault();
+  try{ await window.__PI_RUNTIME_READY__; }catch(_){ }
   msg('Loguję...');
   const loginRaw=$('ownerLogin').value.trim();
   const secret=$('ownerSecret').value;
@@ -221,7 +257,7 @@ $('ownerForm').addEventListener('submit',async e=>{
   piWriteNavigationHandoff('owner',data);
   location.replace('/app.html');
 });
-$('tenantForm').addEventListener('submit',async e=>{e.preventDefault(); msg('Sprawdzam dostęp...'); const phone=$('tenantPhone').value, pin=$('tenantPin').value; if(!phone.replace(/\D/g,'')||!pin.trim()){msg('Podaj numer telefonu i kod dostępu.');return;} let data; try{ const r=await fetch('/.netlify/functions/tenant-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,pin})}); data=await r.json(); }catch(err){msg('Nie udało się połączyć z panelem najemcy.');return;} if(!data.ok){msg(data.message||'Brak dostępu.');return;} if(data.multiple&&Array.isArray(data.sessions)&&data.sessions.length>1){ showPicker(data); return; } data._clientVersion='1.9.19'; sessionStorage.setItem('piTenantSessionV54',JSON.stringify(data)); sessionStorage.removeItem('piTenantMultiSessionV551'); piWriteNavigationHandoff('tenant',data); location.replace('/app.html');});
+$('tenantForm').addEventListener('submit',async e=>{e.preventDefault(); try{ await window.__PI_RUNTIME_READY__; }catch(_){ } msg('Sprawdzam dostęp...'); const phone=$('tenantPhone').value, pin=$('tenantPin').value; if(!phone.replace(/\D/g,'')||!pin.trim()){msg('Podaj numer telefonu i kod dostępu.');return;} let data; try{ const r=await fetch('/.netlify/functions/tenant-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,pin})}); data=await r.json(); }catch(err){msg('Nie udało się połączyć z panelem najemcy.');return;} if(!data.ok){msg(data.message||'Brak dostępu.');return;} if(data.multiple&&Array.isArray(data.sessions)&&data.sessions.length>1){ showPicker(data); return; } data._clientVersion='1.9.19'; sessionStorage.setItem('piTenantSessionV54',JSON.stringify(data)); sessionStorage.removeItem('piTenantMultiSessionV551'); piWriteNavigationHandoff('tenant',data); location.replace('/app.html');});
 function safe(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function money(v){return Number(v||0).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł'}
 function showPicker(data){ sessionStorage.setItem('piTenantMultiSessionV551',JSON.stringify(data)); msg(''); const box=$('picker'); box.classList.remove('hidden'); const sessions=data.sessions||[]; box.innerHTML='<div class="hint">Wybierz mieszkanie:</div>'+sessions.map((s,i)=>{const p=s.property||{}; const meta=[p.address,p.area_m2?Number(p.area_m2).toLocaleString('pl-PL')+' m²':null,p.rent_amount?'Najem: '+money(p.rent_amount):null].filter(Boolean).join(' • '); return `<div class="choice" data-i="${i}"><b>${safe(p.name||'Mieszkanie')}</b><span>${safe(meta||'Podgląd mieszkania')}</span></div>`}).join(''); box.querySelectorAll('.choice').forEach(el=>el.onclick=()=>{const s=sessions[Number(el.dataset.i)]; s._clientVersion='1.9.19'; sessionStorage.setItem('piTenantSessionV54',JSON.stringify(s)); piWriteNavigationHandoff('tenant',s); location.replace('/app.html');});}

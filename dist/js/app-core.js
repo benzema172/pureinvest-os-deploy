@@ -90,6 +90,8 @@
       sessionStorage.removeItem('piTenantMultiSessionV551');
       sessionStorage.removeItem('piFriendSessionV1');
       sessionStorage.removeItem('piAuthHandoffV1919');
+      sessionStorage.removeItem('piLoginRedirectReasonV1925');
+      try{ localStorage.removeItem('piNavigationHandoffV1925'); }catch(_){ }
     }catch(_){ }
     try{ await dbClient()?.auth?.signOut?.(); }catch(_){ }
     try{ delete document.body.dataset.piFriendSandbox; document.body.classList.remove('pi-friend-sandbox-mode'); }catch(_){ }
