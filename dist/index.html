@@ -9,11 +9,11 @@
 <link rel="manifest" href="/manifest.webmanifest" />
 <link rel="icon" href="/icons/icon-192.png" type="image/png" />
 <script>
-(()=>{const build='2026-09-23-startup-hotfix-v1924',key='piReleaseBootstrap';try{if(localStorage.getItem(key)===build)return;localStorage.setItem(key,build);if(!('caches' in window))return;caches.keys().then(keys=>{const old=keys.filter(name=>name.startsWith('pureinvest-'));return Promise.all(old.map(name=>caches.delete(name))).then(()=>{if(old.length)location.reload();});}).catch(()=>null);}catch(_){}})();
+(()=>{const build='2026-09-23-session-handoff-v1925',key='piReleaseBootstrap';try{if(localStorage.getItem(key)===build)return;localStorage.setItem(key,build);if(!('caches' in window))return;caches.keys().then(keys=>{const old=keys.filter(name=>name.startsWith('pureinvest-'));return Promise.all(old.map(name=>caches.delete(name))).then(()=>{if(old.length)location.reload();});}).catch(()=>null);}catch(_){}})();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8" integrity="sha384-z2hqtpr/vSDZ8zSjLOiNgnR/mpU799AD93s6rvkNJLI6Hl0YlKXEhDtREzNT749S" crossorigin="anonymous"></script>
-<script src="js/version.js?v=2026-09-23-startup-hotfix-v1924"></script>
-<script src="js/config.js?v=2026-09-23-startup-hotfix-v1924"></script>
+<script src="js/version.js?v=2026-09-23-session-handoff-v1925"></script>
+<script src="js/config.js?v=2026-09-23-session-handoff-v1925"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f4f1ec;--card:#fff;--border:#e7dfd5;--text:#171717;--muted:#6b6258;--primary:#c56a26;--primary2:#e07a2d;--dark:#121212;}
@@ -126,6 +126,12 @@ if(!window.supabase || typeof window.supabase.createClient !== 'function'){
 }
 
 const db=window.supabase.createClient(window.PI_CONFIG.SUPABASE_URL || 'https://example.supabase.co', window.PI_CONFIG.SUPABASE_PUBLISHABLE_KEY || 'missing-publishable-key');
+const PI_NAV_HANDOFF_KEY='piNavigationHandoffV1925';
+function piWriteNavigationHandoff(kind,payload){
+  try{
+    localStorage.setItem(PI_NAV_HANDOFF_KEY,JSON.stringify({createdAt:Date.now(),kind,payload}));
+  }catch(_){ }
+}
 const $=id=>document.getElementById(id); const msg=t=>{$('msg').textContent=t||''};
 function mode(which,focusField=true){ const owner=which==='owner'; $('ownerForm').classList.toggle('hidden',!owner); $('tenantForm').classList.toggle('hidden',owner); $('ownerTab').classList.toggle('active',owner); $('tenantTab').classList.toggle('active',!owner); $('ownerTab').setAttribute('aria-selected',String(owner)); $('tenantTab').setAttribute('aria-selected',String(!owner)); $('ownerTab').tabIndex=owner?0:-1; $('tenantTab').tabIndex=owner?-1:0; $('picker').classList.add('hidden'); msg(''); if(focusField)setTimeout(()=>$(owner?'ownerLogin':'tenantPhone')?.focus(),0); }
 $('ownerTab').onclick=()=>mode('owner'); $('tenantTab').onclick=()=>mode('tenant');
@@ -158,6 +164,7 @@ $('ownerForm').addEventListener('submit',async e=>{
       sessionStorage.removeItem('piOwnerSessionV570');
       sessionStorage.removeItem('piTenantSessionV54');
       sessionStorage.removeItem('piTenantMultiSessionV551');
+      piWriteNavigationHandoff('friend',data);
       location.replace('/app.html');
       return;
     }catch(err){
@@ -185,6 +192,7 @@ $('ownerForm').addEventListener('submit',async e=>{
     sessionStorage.setItem('piAuthHandoffV1919',JSON.stringify({createdAt:Date.now(),kind:'supabase'}));
     sessionStorage.removeItem('piOwnerSessionV570');
     sessionStorage.removeItem('piTenantSessionV54');
+    piWriteNavigationHandoff('supabase',{access_token:confirmedSession.access_token,refresh_token:confirmedSession.refresh_token});
     location.replace('/app.html');
     return;
   }
@@ -210,12 +218,13 @@ $('ownerForm').addEventListener('submit',async e=>{
   sessionStorage.setItem('piOwnerSessionV570',JSON.stringify(data));
   sessionStorage.removeItem('piTenantSessionV54');
   sessionStorage.removeItem('piTenantMultiSessionV551');
+  piWriteNavigationHandoff('owner',data);
   location.replace('/app.html');
 });
-$('tenantForm').addEventListener('submit',async e=>{e.preventDefault(); msg('Sprawdzam dostęp...'); const phone=$('tenantPhone').value, pin=$('tenantPin').value; if(!phone.replace(/\D/g,'')||!pin.trim()){msg('Podaj numer telefonu i kod dostępu.');return;} let data; try{ const r=await fetch('/.netlify/functions/tenant-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,pin})}); data=await r.json(); }catch(err){msg('Nie udało się połączyć z panelem najemcy.');return;} if(!data.ok){msg(data.message||'Brak dostępu.');return;} if(data.multiple&&Array.isArray(data.sessions)&&data.sessions.length>1){ showPicker(data); return; } data._clientVersion='1.9.19'; sessionStorage.setItem('piTenantSessionV54',JSON.stringify(data)); sessionStorage.removeItem('piTenantMultiSessionV551'); location.replace('/app.html');});
+$('tenantForm').addEventListener('submit',async e=>{e.preventDefault(); msg('Sprawdzam dostęp...'); const phone=$('tenantPhone').value, pin=$('tenantPin').value; if(!phone.replace(/\D/g,'')||!pin.trim()){msg('Podaj numer telefonu i kod dostępu.');return;} let data; try{ const r=await fetch('/.netlify/functions/tenant-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,pin})}); data=await r.json(); }catch(err){msg('Nie udało się połączyć z panelem najemcy.');return;} if(!data.ok){msg(data.message||'Brak dostępu.');return;} if(data.multiple&&Array.isArray(data.sessions)&&data.sessions.length>1){ showPicker(data); return; } data._clientVersion='1.9.19'; sessionStorage.setItem('piTenantSessionV54',JSON.stringify(data)); sessionStorage.removeItem('piTenantMultiSessionV551'); piWriteNavigationHandoff('tenant',data); location.replace('/app.html');});
 function safe(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function money(v){return Number(v||0).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł'}
-function showPicker(data){ sessionStorage.setItem('piTenantMultiSessionV551',JSON.stringify(data)); msg(''); const box=$('picker'); box.classList.remove('hidden'); const sessions=data.sessions||[]; box.innerHTML='<div class="hint">Wybierz mieszkanie:</div>'+sessions.map((s,i)=>{const p=s.property||{}; const meta=[p.address,p.area_m2?Number(p.area_m2).toLocaleString('pl-PL')+' m²':null,p.rent_amount?'Najem: '+money(p.rent_amount):null].filter(Boolean).join(' • '); return `<div class="choice" data-i="${i}"><b>${safe(p.name||'Mieszkanie')}</b><span>${safe(meta||'Podgląd mieszkania')}</span></div>`}).join(''); box.querySelectorAll('.choice').forEach(el=>el.onclick=()=>{const s=sessions[Number(el.dataset.i)]; s._clientVersion='1.9.19'; sessionStorage.setItem('piTenantSessionV54',JSON.stringify(s)); location.replace('/app.html');});}
+function showPicker(data){ sessionStorage.setItem('piTenantMultiSessionV551',JSON.stringify(data)); msg(''); const box=$('picker'); box.classList.remove('hidden'); const sessions=data.sessions||[]; box.innerHTML='<div class="hint">Wybierz mieszkanie:</div>'+sessions.map((s,i)=>{const p=s.property||{}; const meta=[p.address,p.area_m2?Number(p.area_m2).toLocaleString('pl-PL')+' m²':null,p.rent_amount?'Najem: '+money(p.rent_amount):null].filter(Boolean).join(' • '); return `<div class="choice" data-i="${i}"><b>${safe(p.name||'Mieszkanie')}</b><span>${safe(meta||'Podgląd mieszkania')}</span></div>`}).join(''); box.querySelectorAll('.choice').forEach(el=>el.onclick=()=>{const s=sessions[Number(el.dataset.i)]; s._clientVersion='1.9.19'; sessionStorage.setItem('piTenantSessionV54',JSON.stringify(s)); piWriteNavigationHandoff('tenant',s); location.replace('/app.html');});}
 (async()=>{try{ const friendStored=sessionStorage.getItem('piFriendSessionV1'); if(friendStored){ location.replace('/app.html'); return; } const ownerStored=sessionStorage.getItem('piOwnerSessionV570'); if(ownerStored){ location.replace('/app.html'); return; } const stored=sessionStorage.getItem('piTenantSessionV54'); if(stored){ location.replace('/app.html'); return; } const {data}=await db.auth.getSession(); if(data&&data.session){ location.replace('/app.html'); return; }}catch(e){} finally{ $('bootLoader').style.display='none'; }})();
 </script>
 </body>

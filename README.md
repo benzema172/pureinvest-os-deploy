@@ -1,10 +1,7 @@
 # PureInvest OS — deployment artifact
 
-Public deployment repository for the prebuilt production artifact of PureInvest OS.
+Publiczne repo zawiera wyłącznie gotowy artefakt produkcyjny dla Netlify oraz funkcje serwerowe wymagane przez aplikację.
 
-- Production: https://panel.pure-invest.pl
-- Hosting: Netlify (`panelaplikacja`)
-- Backend: Supabase
-- Current artifact: **1.9.24**
+Aktualna wersja: **1.9.25**.
 
-This repository contains only the compiled `dist/` output and Netlify Functions required for deployment. Source development, tests, SQL migrations, working files, and secrets are intentionally excluded.
+Źródłowe repozytorium robocze pozostaje prywatne.

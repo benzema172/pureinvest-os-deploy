@@ -1,4 +1,4 @@
-const CACHE='pureinvest-static-2026-09-23-startup-hotfix-v1924';
+const CACHE='pureinvest-static-2026-09-23-session-handoff-v1925';
 const SHELL=['/','/index.html','/app.html','/css/app.css','/js/version.js','/manifest.webmanifest','/icons/icon-192.png','/icons/icon-512.png','/icons/icon-512-maskable.png'];
 self.__piCacheableAssetResponse=(request,response)=>{
   if(!response || !response.ok) return false;
