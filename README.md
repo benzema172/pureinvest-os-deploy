@@ -1,7 +1,5 @@
 # PureInvest OS — deployment artifact
 
-Publiczne repo zawiera wyłącznie gotowy artefakt produkcyjny dla Netlify oraz funkcje serwerowe wymagane przez aplikację.
+Production deployment repository for **PureInvest OS 1.9.27**.
 
-Aktualna wersja: **1.9.25**.
-
-Źródłowe repozytorium robocze pozostaje prywatne.
+Source code remains in the private repository. This public repository contains only the prebuilt Netlify deployment artifact and serverless functions required for production.
