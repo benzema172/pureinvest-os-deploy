@@ -1,6 +1,6 @@
 {
   "name": "pureinvest-os",
-  "version": "1.9.24",
+  "version": "1.9.26",
   "dependencies": {
     "mammoth": "1.12.0",
     "pdf-parse": "1.1.4"
@@ -23,7 +23,7 @@
     "test:demo-tenant": "node tests/demo-tenant-account.test.js",
     "test:tenant-ui-layout": "node tests/tenant-ui-layout.test.js",
     "test:platform-admin": "node tests/platform-admin-rebind.test.js",
-    "test": "npm run test:payment-period && npm run test:settlement && npm run test:logic-audit && npm run test:security && npm run test:platform-admin && npm run test:demo-manager && npm run test:demo-tenant && npm run test:tenant-ui-layout && npm run test:final-security && npm run test:session-scope && npm run test:single-login && npm run test:tenant-history && npm run test:expenses-component && npm run test:arrears-breakdown && npm run test:fee-breakdowns && npm run test:fee-meter-bridge && npm run test:tenant-fee-refresh && npm run test:tenant-period-media && npm run test:fee-report-publish-integration && npm run test:fee-active-property && npm run test:finance-dashboard && npm run test:fee-accordion-ui && npm run test:finance-unification-v1923 && npm run test:transactions-compact-v1922 && npm run test:build-v1923 && npm run test:startup-hotfix-v1924",
+    "test": "npm run test:payment-period && npm run test:settlement && npm run test:logic-audit && npm run test:security && npm run test:platform-admin && npm run test:demo-manager && npm run test:demo-tenant && npm run test:tenant-ui-layout && npm run test:final-security && npm run test:session-scope && npm run test:single-login && npm run test:tenant-history && npm run test:expenses-component && npm run test:arrears-breakdown && npm run test:fee-breakdowns && npm run test:fee-meter-bridge && npm run test:tenant-fee-refresh && npm run test:tenant-period-media && npm run test:fee-report-publish-integration && npm run test:fee-active-property && npm run test:finance-dashboard && npm run test:fee-accordion-ui && npm run test:finance-unification-v1923 && npm run test:transactions-compact-v1922 && npm run test:build-v1923 && npm run test:startup-hotfix-v1924 && node tests/session-navigation-handoff-v1925.test.js && node tests/interaction-recovery-v1926.test.js",
     "test:expenses-component": "node tests/expenses-component-compatibility.test.js",
     "test:arrears-breakdown": "node tests/arrears-breakdown-regression.test.js",
     "test:fee-breakdowns": "node tests/fee-breakdowns.test.js",
