@@ -76,13 +76,23 @@
   function normalizeAttachment(node) {
     if (!isAttachmentText(node)) return;
 
+    // Pokazuj informację o załączniku tylko wtedy, gdy istnieje realny,
+    // użyteczny adres pliku. Sam przycisk / handler nie jest dowodem,
+    // że do transakcji faktycznie dodano załącznik.
+    const url = inferAttachmentUrl(node);
+
+    if (!url) {
+      node.dataset.piDeadAttachment = 'true';
+      node.setAttribute('aria-hidden', 'true');
+      node.hidden = true;
+      node.style.display = 'none';
+      return;
+    }
+
     if (node.tagName === 'A') {
-      const href = usableUrl(node.getAttribute('href'));
-      if (!href) {
-        node.dataset.piDeadAttachment = 'true';
-        node.setAttribute('aria-hidden', 'true');
-        return;
-      }
+      node.href = url;
+      node.hidden = false;
+      node.style.removeProperty('display');
       node.classList.add('pi-attachment-link');
       node.textContent = '📎 Otwórz załącznik';
       node.target = '_blank';
@@ -90,28 +100,13 @@
       return;
     }
 
-    const url = inferAttachmentUrl(node);
-    const hasAction = typeof node.onclick === 'function' || normalized(node.getAttribute?.('onclick'));
-    if (url) {
-      const link = document.createElement('a');
-      link.href = url;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.className = `${node.className || ''} pi-attachment-link`.trim();
-      link.textContent = '📎 Otwórz załącznik';
-      node.replaceWith(link);
-      return;
-    }
-
-    if (hasAction || node.tagName === 'BUTTON') {
-      node.textContent = '📎 Otwórz załącznik';
-      node.classList.add('pi-attachment-link');
-      return;
-    }
-
-    // No real URL and no click handler => do not advertise an attachment that cannot be opened.
-    node.dataset.piDeadAttachment = 'true';
-    node.setAttribute('aria-hidden', 'true');
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.className = `${node.className || ''} pi-attachment-link`.trim();
+    link.textContent = '📎 Otwórz załącznik';
+    node.replaceWith(link);
   }
 
   function processRow(row) {
