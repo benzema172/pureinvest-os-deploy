@@ -9431,3 +9431,11 @@ body:not(.tab-dashboard-active) #piDashboardLatestCollapse{
 #piFinanceFeeBreakdownsPanel.hidden #tab-fee-breakdowns{display:block!important}
 @media(max-width:980px){#tab-transactions .pi-finance-main-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:680px){#tab-transactions .pi-finance-main-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* PureInvest OS 1.9.30a — Finanse: blokada starych zakładek top-level */
+#tab-transactions .pi-finance-main-tabs > #piTransactionsFinanceProTopBtn,
+#tab-transactions .pi-finance-main-tabs > #piTransactionsActivityLogTopBtn,
+#tab-transactions .pi-finance-main-tabs > #piTransactionsHistoryTopBtn{
+  display:none!important;
+}

@@ -451,7 +451,14 @@
         },40);
         return out;
       }
-      return original.apply(this,arguments);
+      const out=original.apply(this,arguments);
+      if(tab==='transactions'){
+        setTimeout(()=>{
+          try{ organizeFinanceSection(true); }
+          catch(e){ console.warn('[Finance organize on navigation]', e); }
+        },40);
+      }
+      return out;
     };
     wrapped.__piFinanceUnified1923=true;
     window.switchTab=wrapped;
@@ -459,6 +466,9 @@
   window.piFinanceReorganize = organizeFinanceSection;
   document.addEventListener('DOMContentLoaded',()=>{
     bindLegacyRoutes();
-    try{ removeLegacyNav(); }catch(e){ console.warn('[Finance nav cleanup]', e); }
+    try{
+      removeLegacyNav();
+      organizeFinanceSection(true);
+    }catch(e){ console.warn('[Finance nav cleanup]', e); }
   });
 })();

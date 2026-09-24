@@ -383,9 +383,26 @@
   window.deleteTransaction = function(table,id){ window.piPropertyFinanceDelete(table,id); };
   window.piPropertyFinanceEdit = function(table,id){ window.piOpenTransactionEditModal(table,id); };
 
+  function hasUnifiedFinanceNavigation(tabs){
+    return !!(tabs && (
+      tabs.classList?.contains('pi-finance-main-tabs') ||
+      $('piFinanceOverviewTopBtn') ||
+      $('piFinanceOperationsTopBtn') ||
+      $('piFinanceHistoryTopBtn')
+    ));
+  }
+  function removeLegacyTopTransactionButtons(){
+    ['piTransactionsFinanceProTopBtn','piTransactionsActivityLogTopBtn','piTransactionsHistoryTopBtn'].forEach(id=>{
+      const btn=$(id);
+      if(btn) btn.remove();
+    });
+  }
+
   function ensureActivityPanel(){
     const tabs = document.querySelector('#tab-transactions .pi-transactions-admin-toggles') || document.querySelector('#tab-transactions .pi-mail-actions');
-    if(tabs && !$('piTransactionsActivityLogTopBtn')){
+    const unifiedFinanceNav=hasUnifiedFinanceNavigation(tabs);
+    if(unifiedFinanceNav) removeLegacyTopTransactionButtons();
+    if(tabs && !unifiedFinanceNav && !$('piTransactionsActivityLogTopBtn')){
       const btn=document.createElement('button');
       btn.id='piTransactionsActivityLogTopBtn'; btn.type='button'; btn.className='pi-admin-tab-btn';
       btn.textContent='Dziennik zmian';
@@ -475,8 +492,13 @@
   window.piOpenTransactionsFinancePro = function(){
     try{ window.switchTab?.('transactions', document.querySelector('.nav-item[onclick*=transactions]')); }catch(_){ }
     setTimeout(()=>{
-      const btn=$('piTransactionsFinanceProTopBtn');
-      if(typeof window.piTransactionsTogglePanel === 'function') window.piTransactionsTogglePanel('piTransactionsFinanceProPanel', btn, 'financePro');
+      const unifiedBtn=$('piFinanceOverviewTopBtn');
+      if(unifiedBtn && typeof window.piFinanceGroupOpen === 'function'){
+        window.piFinanceGroupOpen('piTransactionsFinanceProPanel', unifiedBtn, 'financePro');
+      }else{
+        const legacyBtn=$('piTransactionsFinanceProTopBtn');
+        if(typeof window.piTransactionsTogglePanel === 'function') window.piTransactionsTogglePanel('piTransactionsFinanceProPanel', legacyBtn, 'financePro');
+      }
       try{ window.renderFinancePro?.(); }catch(_){ }
     },160);
   };
@@ -621,6 +643,10 @@
     const tabs=document.querySelector('#tab-transactions .pi-transactions-admin-toggles');
     const root=$('tab-transactions');
     if(!tabs || !root) return;
+    if(hasUnifiedFinanceNavigation(tabs)){
+      removeLegacyTopTransactionButtons();
+      return;
+    }
     const add=(id,label,panelId,refresh)=>{
       let btn=$(id);
       if(!btn){
@@ -704,8 +730,13 @@
       try{
         const tab=document.getElementById('tab-transactions');
         if(tab && tab.classList.contains('active')){
-          const btn=document.getElementById('piTransactionsFinanceProTopBtn');
-          window.piTransactionsTogglePanel?.('piTransactionsFinanceProPanel', btn, 'financePro');
+          const unifiedBtn=document.getElementById('piFinanceOverviewTopBtn');
+          if(unifiedBtn && typeof window.piFinanceGroupOpen === 'function'){
+            window.piFinanceGroupOpen('piTransactionsFinanceProPanel', unifiedBtn, 'financePro');
+          }else{
+            const legacyBtn=document.getElementById('piTransactionsFinanceProTopBtn');
+            window.piTransactionsTogglePanel?.('piTransactionsFinanceProPanel', legacyBtn, 'financePro');
+          }
         }
       }catch(_){}
     }, 1050);
