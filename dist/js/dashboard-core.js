@@ -8,6 +8,17 @@
   const dbClient = () => window.db || window.piDb || window.supabaseClient || (typeof db !== 'undefined' ? db : null);
   const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const safeUrl = value => { try{ const url = new URL(String(value || ''), location.origin); return ['http:','https:'].includes(url.protocol) ? url.href : ''; }catch(_){ return ''; } };
+  const attachmentMeta = value => {
+    const v=String(value ?? '').trim();
+    return v && !/^(?:null|undefined|none|brak|n\/a|-)$/i.test(v) ? v : '';
+  };
+  const hasAttachment = row => !!(safeUrl(row?.attachment_url) && (attachmentMeta(row?.attachment_path) || attachmentMeta(row?.attachment_name)));
+  const attachmentLink = row => {
+    if(!hasAttachment(row)) return '';
+    const url=safeUrl(row.attachment_url), name=attachmentMeta(row.attachment_name), path=attachmentMeta(row.attachment_path);
+    const label=name || 'Otwórz załącznik';
+    return `<a class="attachment-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer" data-attachment-name="${esc(name)}" data-attachment-path="${esc(path)}">📎 ${esc(label)}</a>`;
+  };
   const js = v => JSON.stringify(v ?? '').replaceAll('<','\\u003C').replaceAll('>','\\u003E');
   const num = v => Core().num ? Core().num(v) : Number(v || 0) || 0;
   const money = v => Core().money ? Core().money(v) : (num(v).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł');
@@ -128,7 +139,7 @@
     const transactionCategory=categoryEl ? (categoryEl.value||'all') : 'all';
     if(transactionCategory!=='all') transactionList=transactionList.filter(x=>x.name===transactionCategory);
     const visible=limitMode==='all'?transactionList:transactionList.slice(0,Number(limitMode||10));
-    const item=x=>`<div class="transaction"><div><div class="transaction-title">${esc(x.name)}</div><div class="transaction-date">Data wpływu: ${esc(new Date(x.date).toLocaleString('pl-PL'))}${x.type==='income'&&x.settlement_month?` <span class="pi-settlement-period-hint">Rozliczenie: ${esc(settlementPeriodLabel(x.settlement_month))}</span>`:''}</div>${x.note?`<div class="transaction-note">${esc(x.note)}</div>`:''}${safeUrl(x.attachment_url)?`<a class="attachment-link" href="${esc(safeUrl(x.attachment_url))}" target="_blank" rel="noopener noreferrer">📎 ${esc(x.attachment_name||'Załącznik')}</a>`:''}<div class="actions"><button class="small-btn" onclick='piOpenTransactionEditModal(${js(x.table)},${js(x.id)})'>Edytuj</button><button class="small-btn danger" onclick='piPropertyFinanceDelete(${js(x.table)},${js(x.id)})'>Usuń</button></div></div><div class="${x.type==='income'?'plus':'minus'}">${x.type==='income'?'+':'-'}${money(x.amount)}</div></div>`;
+    const item=x=>`<div class="transaction"><div><div class="transaction-title">${esc(x.name)}</div><div class="transaction-date">Data wpływu: ${esc(new Date(x.date).toLocaleString('pl-PL'))}${x.type==='income'&&x.settlement_month?` <span class="pi-settlement-period-hint">Rozliczenie: ${esc(settlementPeriodLabel(x.settlement_month))}</span>`:''}</div>${x.note?`<div class="transaction-note">${esc(x.note)}</div>`:''}${attachmentLink(x)}<div class="actions"><button class="small-btn" onclick='piOpenTransactionEditModal(${js(x.table)},${js(x.id)})'>Edytuj</button><button class="small-btn danger" onclick='piPropertyFinanceDelete(${js(x.table)},${js(x.id)})'>Usuń</button></div></div><div class="${x.type==='income'?'plus':'minus'}">${x.type==='income'?'+':'-'}${money(x.amount)}</div></div>`;
     const latest=[...all].sort(sorters.newest).slice(0,3);
     if(el('transactionsDashboard')) el('transactionsDashboard').innerHTML=latest.map(item).join('')+(all.length>3?`<button class="subtle-link-btn" style="margin-top:12px" onclick="openTab('transactions')">Pokaż wszystkie transakcje →</button>`:'');
     if(el('transactions')) el('transactions').innerHTML=visible.map(item).join('') || '<div class="transactions-info">Brak transakcji do wyświetlenia.</div>';

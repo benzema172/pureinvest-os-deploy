@@ -76,12 +76,14 @@
   function normalizeAttachment(node) {
     if (!isAttachmentText(node)) return;
 
-    // Pokazuj informację o załączniku tylko wtedy, gdy istnieje realny,
-    // użyteczny adres pliku. Sam przycisk / handler nie jest dowodem,
-    // że do transakcji faktycznie dodano załącznik.
     const url = inferAttachmentUrl(node);
+    const name = normalized(node.getAttribute?.('data-attachment-name') || node.dataset?.attachmentName);
+    const path = normalized(node.getAttribute?.('data-attachment-path') || node.dataset?.attachmentPath);
+    const hasMetadata = !!(name || path);
 
-    if (!url) {
+    // Sam URL nie oznacza, że istnieje plik. Stare rekordy mogły zachować
+    // pusty/techniczny URL bez nazwy i ścieżki — takiego wpisu nie pokazujemy.
+    if (!url || !hasMetadata) {
       node.dataset.piDeadAttachment = 'true';
       node.setAttribute('aria-hidden', 'true');
       node.hidden = true;
@@ -94,7 +96,7 @@
       node.hidden = false;
       node.style.removeProperty('display');
       node.classList.add('pi-attachment-link');
-      node.textContent = '📎 Otwórz załącznik';
+      node.textContent = '📎 ' + (name || 'Otwórz załącznik');
       node.target = '_blank';
       node.rel = 'noopener noreferrer';
       return;
@@ -105,7 +107,9 @@
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
     link.className = `${node.className || ''} pi-attachment-link`.trim();
-    link.textContent = '📎 Otwórz załącznik';
+    link.dataset.attachmentName = name;
+    link.dataset.attachmentPath = path;
+    link.textContent = '📎 ' + (name || 'Otwórz załącznik');
     node.replaceWith(link);
   }
 
