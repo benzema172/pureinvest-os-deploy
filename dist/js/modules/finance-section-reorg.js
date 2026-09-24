@@ -31,8 +31,8 @@
     const items=[
       ['piFinanceOverviewTopBtn','Przegląd','piTransactionsFinanceProPanel','financePro'],
       ['piFinanceOperationsTopBtn','Operacje','piTransactionsOperationsPanel','operations'],
-      ['piTransactionsFixedSettlementsTopBtn','Stałe rozliczenia','piTenantMonthlyCollapse','fixedSettlements'],
-      ['piFinanceFeesTopBtn','Opłaty i media','piFinanceFeeBreakdownsPanel','fees'],
+      ['piTransactionsFixedSettlementsTopBtn','Plan miesięczny','piTenantMonthlyCollapse','fixedSettlements'],
+      ['piFinanceFeesTopBtn','Rozliczenie miesiąca','piFinanceFeeBreakdownsPanel','fees'],
       ['piFinanceHistoryTopBtn','Historia','piTransactionsHistoryGroupPanel','history']
     ];
     const domActiveId = Array.from(tabs.querySelectorAll('.pi-admin-tab-btn.active')).map(b=>b.id)[0] || '';
@@ -297,7 +297,7 @@
     let head=fixed.querySelector('.pi-finance-fixed-head');
     if(!head){
       head=document.createElement('div'); head.className='context-header pi-finance-fixed-head';
-      head.innerHTML='<h2>Stałe rozliczenia</h2><p>Kwoty miesięczne, typy rozliczeń i słownik pozycji w jednym miejscu.</p>';
+      head.innerHTML='<h2>Plan miesięczny</h2><p>Bazowe należności i koszty tego mieszkania. Faktyczne wpłaty i rachunki dodajesz w Operacjach.</p>';
       fixed.insertBefore(head,fixed.firstChild);
     }
     const dict=$('piTransactionsSettlementDictionaryPanel');
@@ -349,11 +349,200 @@
       if(header) header.classList.add('pi-finance-embedded-header');
     }
   }
+  function financeDb(){
+    try{ return window.db || window.piDb || window.supabaseClient || null; }catch(_){ return null; }
+  }
+  function financeProperties(){
+    try{ if(Array.isArray(loadedProperties)) return loadedProperties; }catch(_){ }
+    return Array.isArray(window.loadedProperties) ? window.loadedProperties : [];
+  }
+  function financePropertyId(){
+    const selected=$('piFeeProperty')?.value;
+    if(selected) return String(selected);
+    try{
+      const raw=(typeof activeProperty!=='undefined' && activeProperty) ? activeProperty : window.activeProperty;
+      if(raw) return String(raw?.id || raw);
+    }catch(_){ }
+    return String(window.activePropertyData?.id || '');
+  }
+  function financeProperty(){
+    const id=financePropertyId();
+    return financeProperties().find(p=>String(p.id)===String(id)) || window.activePropertyData || null;
+  }
+  function financeMonth(){
+    return $('piFeeMonth')?.value || window.PureInvestSettlementEngine?.currentMonth?.() || new Date().toISOString().slice(0,7);
+  }
+  function financeMonthLabel(key){
+    try{
+      const [y,m]=String(key||'').split('-').map(Number);
+      return new Date(y,m-1,1).toLocaleDateString('pl-PL',{month:'long',year:'numeric'});
+    }catch(_){ return String(key||''); }
+  }
+  function financeMoney(value){
+    const n=Number(value||0);
+    return (Number.isFinite(n)?n:0).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2})+' zł';
+  }
+  function financeNorm(value){
+    return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  }
+  function financePlanNature(item){
+    const component=String(item?.component || item?.settlement_component || '').toLowerCase();
+    if(String(item?.kind||'')==='income') return 'Należność';
+    if(['electricity','gas','water','media'].includes(component)) return 'Zmienna / zaliczka';
+    if(item?.payer==='owner' || item?.tenant_due===false) return 'Koszt właściciela';
+    return 'Stała miesięczna';
+  }
+  function financePayer(item){
+    return item?.payer==='owner' || item?.tenant_due===false ? 'Właściciel' : 'Najemca';
+  }
+  function financeCachedRows(propertyId){
+    const rows=(window.__piPropertyFinanceAllRowsV741||[]).concat(window.__piPropertyFinanceLastVisible||[]);
+    const seen=new Set(),payments=[],expenses=[];
+    rows.forEach(row=>{
+      const raw=row?.raw || row;
+      if(String(raw?.property_id ?? row?.property_id ?? '')!==String(propertyId)) return;
+      const table=String(row?.table || (row?.type==='income'?'payments':'expenses'));
+      const id=table+'|'+String(raw?.id || row?.id || JSON.stringify(raw));
+      if(seen.has(id)) return;
+      seen.add(id);
+      if(table==='payments') payments.push(raw); else if(table==='expenses') expenses.push(raw);
+    });
+    return {payments,expenses};
+  }
+  async function financeRows(propertyId){
+    const cached=financeCachedRows(propertyId);
+    const client=financeDb();
+    if(!client?.from) return cached;
+    try{
+      const [p,e]=await Promise.all([
+        client.from('payments').select('*').eq('property_id',propertyId),
+        client.from('expenses').select('*').eq('property_id',propertyId)
+      ]);
+      if(p?.error || e?.error) throw p?.error || e?.error;
+      return {payments:p?.data||[],expenses:e?.data||[]};
+    }catch(error){
+      console.warn('[Finance month summary] using cached transactions',error?.message||error);
+      return cached;
+    }
+  }
+  function ensureMonthSettlementSummary(section){
+    if(!section) return null;
+    let host=$('piFinanceMonthSettlementSummary');
+    if(!host){
+      host=document.createElement('div');
+      host.id='piFinanceMonthSettlementSummary';
+      host.className='card pi-finance-month-summary';
+      const filter=section.querySelector('.pi-fee-filter-card');
+      if(filter?.parentElement) filter.insertAdjacentElement('afterend',host);
+      else section.insertBefore(host,section.firstChild);
+    }
+    if(!section.dataset.piFinanceMonthSummaryBound){
+      section.dataset.piFinanceMonthSummaryBound='1';
+      $('piFeeProperty')?.addEventListener('change',()=>setTimeout(()=>window.piFinanceMonthSummaryRefresh?.(),80));
+      $('piFeeMonth')?.addEventListener('change',()=>setTimeout(()=>window.piFinanceMonthSummaryRefresh?.(),80));
+    }
+    return host;
+  }
+  async function renderMonthSettlementSummary(){
+    const section=$('tab-fee-breakdowns');
+    const host=ensureMonthSettlementSummary(section);
+    if(!host) return;
+    const Engine=window.PureInvestSettlementEngine;
+    const property=financeProperty();
+    const month=financeMonth();
+    if(!Engine?.monthly || !property?.id){
+      host.innerHTML='<div class="pi-finance-month-summary-empty"><b>Wybierz mieszkanie i miesiąc.</b><span>W tym miejscu zobaczysz plan, wykonanie i różnicę.</span></div>';
+      return;
+    }
+    host.innerHTML='<div class="pi-finance-month-summary-loading">Ładowanie rozliczenia miesiąca…</div>';
+    const data=await financeRows(property.id);
+    const snapshot=Engine.monthly(property,month,data.payments||[],data.expenses||[]);
+    let planItems=[];
+    try{ planItems=window.piGetEffectiveSettlementItems?.(property,month) || []; }catch(_){ }
+    if(!planItems.length) planItems=(snapshot.fixedRows||[]).map(row=>({name:row.label,component:row.component,kind:row.kind,default_amount:row.amount,payer:row.payer,tenant_due:row.tenant_due}));
+    const actualExpenses=[...(snapshot.actualExpenseRows||[])];
+    const usedActual=new Set();
+    const actualText=row=>financeNorm([row?.category,row?.source,row?.name,row?.vendor,row?.note,row?.description].filter(Boolean).join(' '));
+    const actualComponent=row=>String(Engine.normalizeComponent?.(row?.settlement_component,actualText(row)) || row?.settlement_component || 'other').toLowerCase();
+    const planRows=(planItems||[]).filter(item=>item && item.active!==false && item.recurring==='monthly').map(item=>{
+      const component=String(item.component || item.settlement_component || 'other').toLowerCase();
+      const plan=Number(item.default_amount ?? item.amount ?? 0)||0;
+      let hasActual=false,actual=0;
+      if(String(item.kind||'')==='income' && component==='owner'){
+        hasActual=(snapshot.actualPaymentRows||[]).length>0;
+        actual=Number(snapshot.ownerRentPaidBase||0);
+      }else{
+        const planName=financeNorm(item.name || item.label || '');
+        actualExpenses.forEach((row,index)=>{
+          if(usedActual.has(index)) return;
+          const comp=actualComponent(row),text=actualText(row);
+          const byName=planName.length>2 && text.includes(planName);
+          const byComponent=component!=='other' && comp===component;
+          if(byName || byComponent){
+            usedActual.add(index); hasActual=true; actual+=Number(row.amount||0);
+          }
+        });
+      }
+      return {
+        label:item.name || item.label || Engine.componentLabel?.(component,item) || 'Pozycja',
+        component,plan,actual,hasActual,
+        nature:financePlanNature(item),
+        payer:financePayer(item)
+      };
+    });
+    actualExpenses.forEach((row,index)=>{
+      if(usedActual.has(index)) return;
+      const tenant=(snapshot.actualTenantExpenseRows||[]).includes(row);
+      planRows.push({
+        label:row.category || row.source || row.name || Engine.componentLabel?.(actualComponent(row),row) || 'Koszt',
+        component:actualComponent(row),plan:null,actual:Number(row.amount||0),hasActual:true,
+        nature:'Jednorazowa / poza planem',
+        payer:tenant?'Najemca':'Właściciel'
+      });
+    });
+    const rowsHtml=planRows.length ? planRows.map(row=>{
+      const diff=row.hasActual && row.plan!==null ? row.actual-row.plan : null;
+      const diffText=diff===null ? '—' : ((diff>0.009?'+':'')+financeMoney(diff));
+      const diffClass=diff===null?'is-muted':Math.abs(diff)<=0.009?'is-ok':diff>0?'is-over':'is-under';
+      return `<div class="pi-finance-month-row">
+        <div class="pi-finance-month-name"><b>${esc(row.label)}</b><span class="pi-finance-month-pill">${esc(row.nature)}</span></div>
+        <div><small>Plan</small><b>${row.plan===null?'—':esc(financeMoney(row.plan))}</b></div>
+        <div><small>Faktycznie</small><b>${row.hasActual?esc(financeMoney(row.actual)):'—'}</b></div>
+        <div><small>Różnica</small><b class="${diffClass}">${esc(diffText)}</b></div>
+        <div><small>Płaci</small><b>${esc(row.payer)}</b></div>
+      </div>`;
+    }).join('') : '<div class="pi-finance-month-summary-empty"><b>Brak pozycji w planie i brak operacji.</b><span>Dodaj plan miesięczny albo faktyczną operację.</span></div>';
+    const balanceLabel=snapshot.arrears>0.009?'Brakuje':snapshot.overpayment>0.009?'Nadpłata':'Rozliczone';
+    const balanceValue=snapshot.arrears>0.009?snapshot.arrears:snapshot.overpayment;
+    const balanceClass=snapshot.arrears>0.009?'is-bad':snapshot.overpayment>0.009?'is-good':'is-neutral';
+    host.innerHTML=`
+      <div class="pi-finance-month-summary-head">
+        <div><span class="pi-finance-eyebrow">PLAN → WYKONANIE → RÓŻNICA</span><h3>${esc(financeMonthLabel(month))}</h3><p>Jedno zestawienie dla ${esc(property.name || property.address || 'wybranego mieszkania')}.</p></div>
+        <div class="pi-finance-month-summary-actions"><button type="button" class="subtle-link-btn" onclick="piFinanceGroupOpen('piTenantMonthlyCollapse',document.getElementById('piTransactionsFixedSettlementsTopBtn'),'fixedSettlements')">Edytuj plan</button><button type="button" class="subtle-link-btn" onclick="piFinanceGroupOpen('piTransactionsOperationsPanel',document.getElementById('piFinanceOperationsTopBtn'),'operations')">Dodaj operację</button></div>
+      </div>
+      <div class="pi-finance-month-kpis">
+        <div><span>Należność planowana</span><b>${esc(financeMoney(snapshot.tenantDue||0))}</b></div>
+        <div><span>Wpłacono</span><b>${esc(financeMoney(snapshot.paid||0))}</b></div>
+        <div><span>Koszty rzeczywiste</span><b>${esc(financeMoney(snapshot.expensesTotal||0))}</b></div>
+        <div><span>${esc(balanceLabel)}</span><b class="${balanceClass}">${esc(financeMoney(balanceValue||0))}</b></div>
+      </div>
+      <div class="pi-finance-month-table-head"><span>Pozycja</span><span>Plan</span><span>Faktycznie</span><span>Różnica</span><span>Płaci</span></div>
+      <div class="pi-finance-month-rows">${rowsHtml}</div>
+      <div class="pi-finance-month-summary-note">Plan pochodzi z „Planu miesięcznego”. Wykonanie pochodzi z rzeczywistych wpłat i kosztów. Szczegóły czynszu, liczników i raport PDF znajdują się poniżej.</div>`;
+  }
+  window.piFinanceMonthSummaryRefresh=renderMonthSettlementSummary;
   function buildFees(){
     const panel=ensureShell('piFinanceFeeBreakdownsPanel',''); if(!panel) return;
-    const section=embedLegacySection('tab-fee-breakdowns',panel,{className:'pi-finance-fees-embedded'});
+    const section=embedLegacySection('tab-fee-breakdowns',panel,{
+      className:'pi-finance-fees-embedded',
+      title:'Rozliczenie miesiąca',
+      description:'Porównaj plan z faktycznymi wpłatami i kosztami. Niżej znajdziesz szczegóły czynszu, liczników i raport dla najemcy.'
+    });
     if(section){
+      ensureMonthSettlementSummary(section);
+      const oldEyebrow=section.querySelector('.pi-fee-eyebrow'); if(oldEyebrow) oldEyebrow.textContent='Plan vs wykonanie';
       try{ window.piFeeAccordion1921?.bind?.(); window.piFeeAccordion1921?.summary?.(); }catch(_){ }
+      if(activeTopPanelId==='piFinanceFeeBreakdownsPanel') setTimeout(()=>renderMonthSettlementSummary(),120);
     }
   }
   function buildHistory(){
@@ -410,7 +599,8 @@
           },80);
         }
         if(refreshType==='fees'){
-          window.piRenderFeeBreakdowns?.({preferActive:true});
+          const feeRender=window.piRenderFeeBreakdowns?.({preferActive:true});
+          Promise.resolve(feeRender).finally(()=>setTimeout(()=>window.piFinanceMonthSummaryRefresh?.(),60));
           window.piFeeAccordion1921?.bind?.();
           window.piFeeAccordion1921?.summary?.();
         }

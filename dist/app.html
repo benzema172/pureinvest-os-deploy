@@ -420,10 +420,10 @@
       <div class="context-header pi-fee-context-header">
         <div class="pi-fee-heading-copy">
           <div class="pi-fee-heading-line">
-            <div class="pi-fee-eyebrow">Funkcja opcjonalna</div>
-            <h2>Opłaty i media</h2>
+            <div class="pi-fee-eyebrow">Plan vs wykonanie</div>
+            <h2>Rozliczenie miesiąca</h2>
           </div>
-          <p>Ta sekcja nie zmienia należności, zaległości, kosztów ani działania Rent Engine.</p>
+          <p>Porównaj plan z faktycznymi wpłatami i kosztami. Niżej znajdziesz szczegóły czynszu, liczników i raport dla najemcy.</p>
         </div>
         <span class="pi-fee-readonly-badge">Zapis automatyczny</span>
       </div>
@@ -574,7 +574,7 @@
                 <div class="pi-tenant-total-display">
                   <span>Łączna należność miesięczna</span>
                   <b id="piTenantCardExpectedTotal">0,00 zł</b>
-                  <small>Kwota wynika ze Stałych rozliczeń w sekcji Finanse.</small>
+                  <small>Kwota wynika z Planu miesięcznego w sekcji Finanse.</small>
                 </div>
                 <input id="rentAmountInput" type="hidden">
               </div>
@@ -674,13 +674,13 @@
     <section id="tab-transactions" class="tab-view">
       <div class="context-header">
         <h2>Finanse</h2>
-        <p>Centrum finansów mieszkania: analiza PRO, wpływy, koszty, stałe rozliczenia i historia.</p>
+        <p>Centrum finansów mieszkania: plan, wykonanie, koszty, rozliczenie miesiąca i historia.</p>
       </div>
 
       <div class="pi-admin-tabs pi-unified-tabs pi-transactions-admin-toggles pi-finance-main-tabs">
         <button type="button" id="piFinanceOverviewTopBtn" class="pi-admin-tab-btn active" onclick="piFinanceGroupOpen('piTransactionsFinanceProPanel', this, 'financePro')">Przegląd</button>
         <button type="button" id="piFinanceOperationsTopBtn" class="pi-admin-tab-btn" onclick="piFinanceGroupOpen('piTransactionsOperationsPanel', this, 'operations')">Operacje</button>
-        <button type="button" id="piTransactionsFixedSettlementsTopBtn" class="pi-admin-tab-btn" onclick="piFinanceGroupOpen('piTenantMonthlyCollapse', this, 'fixedSettlements')">Stałe rozliczenia</button>
+        <button type="button" id="piTransactionsFixedSettlementsTopBtn" class="pi-admin-tab-btn" onclick="piFinanceGroupOpen('piTenantMonthlyCollapse', this, 'fixedSettlements')">Plan miesięczny</button>
         <button type="button" id="piFinanceHistoryTopBtn" class="pi-admin-tab-btn" onclick="piFinanceGroupOpen('piTransactionsHistoryGroupPanel', this, 'history')">Historia</button>
       </div>
 
@@ -722,7 +722,7 @@
 
       <div id="piTenantMonthlyCollapse" class="pi-tenant-collapse pi-transactions-collapse pi-admin-subtab hidden">
         <div class="card">
-          <div class="card-title">Stałe rozliczenie miesięczne</div>
+          <div class="card-title">Plan miesięczny</div>
 
           <div class="owner-rent-panel">
             <div>

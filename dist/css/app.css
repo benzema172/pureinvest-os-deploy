@@ -9439,3 +9439,74 @@ body:not(.tab-dashboard-active) #piDashboardLatestCollapse{
 #tab-transactions .pi-finance-main-tabs > #piTransactionsHistoryTopBtn{
   display:none!important;
 }
+
+
+/* PureInvest OS 1.9.31 — Finance UX 2.0: Plan → Wykonanie → Różnica */
+.pi-plan-monthly-head{align-items:center!important;gap:18px!important}
+.pi-plan-monthly-head>div:first-child{max-width:820px}
+.pi-plan-total{min-width:210px;text-align:right}
+.pi-plan-total span{display:block;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#77695c;margin-bottom:4px}
+.pi-plan-total strong{font-size:22px;color:#0f7a3d}
+.pi-plan-monthly-form{margin-top:14px!important}
+.pi-plan-form-title{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px;padding:0 2px}
+.pi-plan-form-title b{font-size:14px}
+.pi-plan-form-title span{font-size:11px;color:#75695d;max-width:620px;text-align:right;line-height:1.4}
+.pi-plan-main-grid{grid-template-columns:1.2fr .9fr 1.2fr .85fr .85fr!important}
+.pi-plan-advanced{margin-top:10px;border:1px solid #eadfd4;border-radius:14px;background:#fff;padding:0 12px}
+.pi-plan-advanced>summary{cursor:pointer;padding:11px 2px;font-size:11px;font-weight:900;color:#6b6258;list-style:none}
+.pi-plan-advanced>summary::-webkit-details-marker{display:none}
+.pi-plan-advanced>summary:after{content:'Rozwiń';float:right;color:#a44c1d}
+.pi-plan-advanced[open]>summary:after{content:'Zwiń'}
+.pi-plan-advanced-grid{grid-template-columns:1fr 1fr!important;padding:2px 0 10px}
+.pi-plan-advanced textarea{width:100%;margin:0 0 10px!important}
+.pi-plan-row{grid-template-columns:minmax(0,1fr) minmax(140px,180px) auto!important;align-items:center!important}
+.pi-plan-row-copy{min-width:0}
+.pi-plan-row-title{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:4px}
+.pi-plan-pill{display:inline-flex;align-items:center;border-radius:999px;background:#fff3e8;color:#8a3f15;padding:4px 7px;font-size:9px;font-weight:900;line-height:1}
+.pi-plan-pill.payer{background:#eef7f1;color:#17663a}
+.pi-plan-row.is-owner .pi-plan-pill.payer{background:#f2f2f2;color:#3e3e3e}
+.pi-plan-row-amount{text-align:right}
+.pi-plan-row-amount span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#7a6e64;font-weight:900;margin-bottom:3px}
+.pi-plan-row-amount strong{font-size:15px}
+.pi-finance-month-summary{margin:12px 0 14px!important;padding:0!important;overflow:hidden}
+.pi-finance-month-summary-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 18px 12px;border-bottom:1px solid #efe5dc}
+.pi-finance-month-summary-head h3{margin:2px 0 3px;font-size:20px;text-transform:capitalize}
+.pi-finance-month-summary-head p{margin:0;color:#75695d;font-size:11px}
+.pi-finance-eyebrow{display:block;font-size:9px;font-weight:950;letter-spacing:.08em;color:#c35d1d}
+.pi-finance-month-summary-actions{display:flex;gap:8px;flex-wrap:wrap}
+.pi-finance-month-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:12px 18px;background:#fbf8f4}
+.pi-finance-month-kpis>div{background:#fff;border:1px solid #eadfd4;border-radius:12px;padding:10px 12px}
+.pi-finance-month-kpis span,.pi-finance-month-row small{display:block;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#786c62;margin-bottom:3px}
+.pi-finance-month-kpis b{font-size:15px}
+.pi-finance-month-kpis .is-bad{color:#b91c1c}.pi-finance-month-kpis .is-good{color:#16723a}
+.pi-finance-month-table-head,.pi-finance-month-row{display:grid;grid-template-columns:minmax(220px,1.6fr) repeat(4,minmax(100px,.72fr));gap:10px;align-items:center}
+.pi-finance-month-table-head{padding:9px 18px;background:#fff;border-top:1px solid #f0e6dc;border-bottom:1px solid #f0e6dc;font-size:9px;font-weight:950;text-transform:uppercase;letter-spacing:.05em;color:#786c62}
+.pi-finance-month-row{padding:10px 18px;border-bottom:1px solid #f1e9e2}
+.pi-finance-month-row:last-child{border-bottom:0}
+.pi-finance-month-name{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.pi-finance-month-name b{font-size:12px}
+.pi-finance-month-pill{display:inline-flex;padding:4px 7px;border-radius:999px;background:#f4f1ec;color:#66594e;font-size:9px;font-weight:900}
+.pi-finance-month-row>div:not(:first-child){text-align:right}
+.pi-finance-month-row>div:not(:first-child)>b{font-size:12px}
+.pi-finance-month-row .is-muted{color:#8a8179}.pi-finance-month-row .is-ok{color:#16723a}.pi-finance-month-row .is-over{color:#a44c1d}.pi-finance-month-row .is-under{color:#2563a8}
+.pi-finance-month-summary-note{padding:10px 18px;background:#fffaf4;border-top:1px solid #f0e6dc;color:#75695d;font-size:10px;line-height:1.45}
+.pi-finance-month-summary-loading,.pi-finance-month-summary-empty{padding:18px;color:#75695d}
+.pi-finance-month-summary-empty b,.pi-finance-month-summary-empty span{display:block}.pi-finance-month-summary-empty span{margin-top:4px;font-size:11px}
+#piFinanceFeeBreakdownsPanel>#tab-fee-breakdowns>.pi-fee-kpi-grid{opacity:.82}
+#piFinanceFeeBreakdownsPanel>#tab-fee-breakdowns>.pi-fee-kpi-grid:before{content:'Szczegóły raportu opłat i mediów';grid-column:1/-1;font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.06em;color:#75695d;margin:2px 0 -2px}
+@media(max-width:1120px){
+  .pi-plan-main-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .pi-finance-month-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pi-finance-month-table-head,.pi-finance-month-row{grid-template-columns:minmax(190px,1.5fr) repeat(4,minmax(90px,.7fr))}
+}
+@media(max-width:760px){
+  .pi-plan-form-title,.pi-finance-month-summary-head{align-items:flex-start;flex-direction:column}
+  .pi-plan-form-title span{text-align:left}
+  .pi-plan-main-grid,.pi-plan-advanced-grid,.pi-finance-month-kpis{grid-template-columns:1fr!important}
+  .pi-plan-row{grid-template-columns:1fr!important}
+  .pi-plan-row-amount{text-align:left}
+  .pi-finance-month-table-head{display:none}
+  .pi-finance-month-row{grid-template-columns:1fr 1fr!important;padding:12px 14px}
+  .pi-finance-month-name{grid-column:1/-1}
+  .pi-finance-month-row>div:not(:first-child){text-align:left}
+}

@@ -705,22 +705,30 @@
     if(legacy) legacy.classList.add('pi-legacy-rent-hidden');
     const wrap=document.createElement('div'); wrap.id='piTenantSettlementManager'; wrap.className='pi-tenant-settlement-manager';
     wrap.innerHTML=`
-      <div class="pi-tenant-settlement-head"><div><b>Stałe pozycje rozliczenia</b><span>Wybierasz typ ze słownika albo wpisujesz nowy, a poniżej od razu ustawiasz kwotę dla tego mieszkania.</span></div><strong id="piTenantSettlementTotal">0,00 zł</strong></div>
+      <div class="pi-tenant-settlement-head pi-plan-monthly-head">
+        <div><b>Plan miesięczny tego mieszkania</b><span>Ustaw tu bazowe należności i koszty. Faktyczne wpłaty oraz rachunki dodajesz w Operacjach, a porównanie zobaczysz w Rozliczeniu miesiąca.</span></div>
+        <div class="pi-plan-total"><span>Należność najemcy / mies.</span><strong id="piTenantSettlementTotal">0,00 zł</strong></div>
+      </div>
       <div id="piTenantSettlementList" class="pi-tenant-settlement-list"></div>
-      <div class="pi-tenant-settlement-form pi-smart-settlement-form">
+      <div class="pi-tenant-settlement-form pi-smart-settlement-form pi-plan-monthly-form">
         <input type="hidden" id="piTenantSettlementEditId">
-        <div class="pi-smart-settlement-note"><b>Jedno miejsce pracy:</b> wybierz typ ze słownika albo wpisz nowy. Nowy typ zapisze się w słowniku automatycznie i od razu dostanie kwotę dla tego mieszkania.</div>
-        <div class="pi-settlement-grid compact pi-fixed-settlement-grid">
-          <label>Typ rozliczenia<select id="piTenantSettlementDefinition"></select></label>
-          <label>Rodzaj<select id="piTenantSettlementKind"><option value="income">Wpływ</option><option value="expense">Koszt</option></select></label>
-          <label>Nazwa / nowy typ<input id="piTenantSettlementName" placeholder="np. Najem, Śmieci, Internet"></label>
-          <label>Kwota miesięczna<input id="piTenantSettlementAmount" inputmode="decimal" placeholder="0,00"></label>
+        <div class="pi-plan-form-title"><b>Dodaj pozycję do planu</b><span>Wybierz gotowy typ albo wpisz własną nazwę. Pozycja od razu dotyczy aktualnego mieszkania.</span></div>
+        <div class="pi-settlement-grid compact pi-fixed-settlement-grid pi-plan-main-grid">
+          <label>Gotowy typ<select id="piTenantSettlementDefinition"></select></label>
+          <label>Rodzaj<select id="piTenantSettlementKind"><option value="income">Należność / wpływ</option><option value="expense">Koszt</option></select></label>
+          <label>Nazwa pozycji<input id="piTenantSettlementName" placeholder="np. Najem, Śmieci, Internet"></label>
+          <label>Kwota planowana / mies.<input id="piTenantSettlementAmount" inputmode="decimal" placeholder="0,00"></label>
           <label>Kto płaci<select id="piTenantSettlementPayer"><option value="tenant">Najemca</option><option value="owner">Właściciel</option></select></label>
-          <label>Składnik<select id="piTenantSettlementComponent"></select></label>
-          <label>Podatek<select id="piTenantSettlementTaxable"><option value="no">Nie</option><option value="yes">Tak, 8,5%</option></select></label>
         </div>
-        <textarea id="piTenantSettlementNote" placeholder="Notatka do pozycji, opcjonalnie"></textarea>
-        <div class="pi-settlement-actions"><button type="button" class="pi-primary-btn" data-pi-settlement-action="save-fixed">Dodaj do mieszkania</button><button type="button" class="subtle-link-btn" data-pi-settlement-action="clear-fixed">Wyczyść</button><button type="button" class="subtle-link-btn" data-pi-settlement-action="save-tenant">Zapisz dane najemcy i rozliczenie</button></div>
+        <details class="pi-plan-advanced">
+          <summary>Ustawienia zaawansowane</summary>
+          <div class="pi-settlement-grid compact pi-plan-advanced-grid">
+            <label>Składnik systemowy<select id="piTenantSettlementComponent"></select></label>
+            <label>Podatek<select id="piTenantSettlementTaxable"><option value="no">Nie</option><option value="yes">Tak, 8,5%</option></select></label>
+          </div>
+          <textarea id="piTenantSettlementNote" placeholder="Notatka do pozycji, opcjonalnie"></textarea>
+        </details>
+        <div class="pi-settlement-actions"><button type="button" class="pi-primary-btn" data-pi-settlement-action="save-fixed">Dodaj do planu</button><button type="button" class="subtle-link-btn" data-pi-settlement-action="clear-fixed">Wyczyść</button><button type="button" class="subtle-link-btn" data-pi-settlement-action="save-tenant">Zapisz plan i dane najemcy</button></div>
       </div>`;
     card.insertBefore(wrap, card.firstChild.nextSibling);
     const c=$('piTenantSettlementComponent'); if(c) c.innerHTML=componentOptions('owner');
@@ -734,7 +742,7 @@
     if($('piTenantSettlementComponent')) $('piTenantSettlementComponent').value='owner';
     if($('piTenantSettlementPayer')) $('piTenantSettlementPayer').value='tenant';
     if($('piTenantSettlementTaxable')) $('piTenantSettlementTaxable').value='yes';
-    const b=document.querySelector('[data-pi-settlement-action="save-fixed"]'); if(b) b.textContent='Dodaj do mieszkania';
+    const b=document.querySelector('[data-pi-settlement-action="save-fixed"]'); if(b) b.textContent='Dodaj do planu';
   }
   function ensureDefinitionFromFixedForm(store, pid){
     const kind=$('piTenantSettlementKind')?.value === 'expense' ? 'expense' : 'income';
@@ -788,7 +796,7 @@
     const item=propertyItems().find(x=>x.id===id); if(!item) return;
     ensureTenantSettlementPanel();
     if($('piTenantSettlementDefinition')) $('piTenantSettlementDefinition').value=''; $('piTenantSettlementEditId').value=item.id; $('piTenantSettlementKind').value=item.kind; $('piTenantSettlementName').value=item.name; $('piTenantSettlementComponent').value=item.component || 'other'; $('piTenantSettlementAmount').value=item.default_amount || ''; $('piTenantSettlementPayer').value=(item.payer==='owner'||item.tenant_due===false)?'owner':'tenant'; $('piTenantSettlementTaxable').value=item.taxable?'yes':'no'; $('piTenantSettlementNote').value=item.note || '';
-    const b=document.querySelector('[data-pi-settlement-action="save-fixed"]'); if(b) b.textContent='Zapisz pozycję';
+    const b=document.querySelector('[data-pi-settlement-action="save-fixed"]'); if(b) b.textContent='Zapisz pozycję planu';
   }
   function deleteFixedItem(id){
     if(!id || !confirm('Usunąć stałą pozycję z mieszkania?')) return;
@@ -818,15 +826,26 @@
       list.innerHTML=`<div class="pi-empty-state"><b>Używam starych pól mieszkania jako stałego rozliczenia.</b><span>Zapisz lub dodaj nową pozycję, aby przejść na centralny słownik rozliczeń.</span></div>` + renderFixedRows(items, true);
       return;
     }
-    if(!items.length){ list.innerHTML='<div class="pi-empty-state"><b>Brak stałych pozycji.</b><span>Dodaj najem, czynsz, media albo np. Śmieci jako miesięczną pozycję mieszkania.</span></div>'; return; }
+    if(!items.length){ list.innerHTML='<div class="pi-empty-state"><b>Brak pozycji w planie miesięcznym.</b><span>Dodaj najem, czynsz, media albo koszt właściciela. Faktyczne kwoty będziesz później porównywać z tym planem.</span></div>'; return; }
     list.innerHTML=renderFixedRows(items, false);
   }
+  function planCharacterLabel(item){
+    const component=String(item?.component || '').toLowerCase();
+    if(item?.kind==='income') return 'Należność';
+    if(['electricity','gas','water','media'].includes(component)) return 'Zmienna / zaliczka';
+    if(item?.payer==='owner' || item?.tenant_due===false) return 'Koszt właściciela';
+    return 'Stała miesięczna';
+  }
   function renderFixedRows(items, legacy){
-    return `<div class="pi-tenant-settlement-rows">${items.map(item=>`
-      <div class="pi-tenant-settlement-row ${item.tenant_due!==false && item.payer!=='owner'?'is-tenant':'is-owner'}">
-        <div><b>${esc(item.name)}</b><small>${esc(kindLabel(item.kind))} · ${esc(COMPONENT_LABELS[item.component] || item.component)} · ${esc(payerLabel(item))}${item.taxable?' · ryczałt 8,5%':''}</small>${item.note?`<em>${esc(item.note)}</em>`:''}</div>
-        <strong>${esc(money(item.default_amount))}</strong>
-        <div class="pi-settlement-row-actions">${legacy?`<button type="button" class="small-btn" data-pi-settlement-action="copy-legacy">Przenieś do słownika</button>`:`<button type="button" class="small-btn" data-pi-settlement-action="edit-fixed" data-id="${esc(item.id)}">Edytuj</button><button type="button" class="small-btn danger" data-pi-settlement-action="delete-fixed" data-id="${esc(item.id)}">Usuń</button>`}</div>
+    return `<div class="pi-tenant-settlement-rows pi-plan-rows">${items.map(item=>`
+      <div class="pi-tenant-settlement-row pi-plan-row ${item.tenant_due!==false && item.payer!=='owner'?'is-tenant':'is-owner'}">
+        <div class="pi-plan-row-copy">
+          <div class="pi-plan-row-title"><b>${esc(item.name)}</b><span class="pi-plan-pill">${esc(planCharacterLabel(item))}</span><span class="pi-plan-pill payer">${esc(item.payer==='owner'||item.tenant_due===false?'Płaci właściciel':'Płaci najemca')}</span></div>
+          <small>${esc(COMPONENT_LABELS[item.component] || item.component)}${item.taxable?' · ryczałt 8,5%':''}</small>
+          ${item.note?`<em>${esc(item.note)}</em>`:''}
+        </div>
+        <div class="pi-plan-row-amount"><span>Plan / miesiąc</span><strong>${esc(money(item.default_amount))}</strong></div>
+        <div class="pi-settlement-row-actions">${legacy?`<button type="button" class="small-btn" data-pi-settlement-action="copy-legacy">Przenieś do planu</button>`:`<button type="button" class="small-btn" data-pi-settlement-action="edit-fixed" data-id="${esc(item.id)}">Edytuj</button><button type="button" class="small-btn danger" data-pi-settlement-action="delete-fixed" data-id="${esc(item.id)}">Usuń</button>`}</div>
       </div>`).join('')}</div>`;
   }
   function copyLegacyToStore(){
