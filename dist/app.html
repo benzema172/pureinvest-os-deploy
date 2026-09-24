@@ -14,7 +14,7 @@
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/app.css?v=2026-09-24-finance-tabs-hotfix-v1930a">
+<link rel="stylesheet" href="css/app.css?v=2026-09-24-dashboard-refresh-v1933">
 <link rel="stylesheet" href="css/client-readiness.css?v=2026-09-24-clean-stability-v1930">
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="/manifest.webmanifest">
@@ -202,7 +202,7 @@
         <div class="command-panel">
           <div class="command-eyebrow">PureInvest OS</div>
           
-          <div class="command-title">Centrum dowodzenia najmem</div>
+          <div class="command-title">Centrum najmu</div>
           <div class="command-sub">Alerty, wynik miesiąca, aktywność i szybkie decyzje w jednym miejscu.</div>
         </div>
       </div>
@@ -228,9 +228,9 @@
       <div id="commandAlerts" class="command-alerts"></div>
 
           <div class="pi-admin-tabs pi-unified-tabs pi-command-admin-toggles">
-            <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardCostCollapse', this)">Dodaj koszt</button>
+            <button type="button" class="pi-admin-tab-btn pi-dashboard-action-primary" onclick="piCommandTogglePanel('piDashboardPaymentCollapse', this)">Dodaj wpłatę</button>
+            <button type="button" class="pi-admin-tab-btn pi-dashboard-action-primary" onclick="piCommandTogglePanel('piDashboardCostCollapse', this)">Dodaj koszt</button>
             <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardOcrCollapse', this)">OCR PRO</button>
-            <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardPaymentCollapse', this)">Dodaj wpłatę</button>
             <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardLatestCollapse', this)">Ostatnie transakcje</button>
             <button type="button" class="pi-admin-tab-btn" onclick="piCommandTogglePanel('piDashboardFiltersCollapse', this, 'filters')">Filtry i sortowanie</button>
           </div>
