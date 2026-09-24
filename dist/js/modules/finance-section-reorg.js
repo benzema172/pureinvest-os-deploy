@@ -3,6 +3,14 @@
   window.__PI_FINANCE_REORG_1730__ = true;
   const $ = id => document.getElementById(id);
   const TOP_IDS = ['piTransactionsFinanceProPanel','piTransactionsOperationsPanel','piTenantMonthlyCollapse','piFinanceFeeBreakdownsPanel','piTransactionsHistoryGroupPanel'];
+  const TOP_BUTTON_BY_PANEL = {
+    piTransactionsFinanceProPanel:'piFinanceOverviewTopBtn',
+    piTransactionsOperationsPanel:'piFinanceOperationsTopBtn',
+    piTenantMonthlyCollapse:'piTransactionsFixedSettlementsTopBtn',
+    piFinanceFeeBreakdownsPanel:'piFinanceFeesTopBtn',
+    piTransactionsHistoryGroupPanel:'piFinanceHistoryTopBtn'
+  };
+  let activeTopPanelId = null;
   const INNER_OPS = ['piFinanceQuickOpsPanel','piTransactionsMailPanel'];
   const INNER_HISTORY = ['piTransactionsHistoryCollapse','piTransactionsActivityLogPanel'];
   function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
@@ -27,12 +35,13 @@
       ['piFinanceFeesTopBtn','Opłaty i media','piFinanceFeeBreakdownsPanel','fees'],
       ['piFinanceHistoryTopBtn','Historia','piTransactionsHistoryGroupPanel','history']
     ];
-    const activeId = Array.from(tabs.querySelectorAll('.pi-admin-tab-btn.active')).map(b=>b.id)[0] || 'piFinanceOverviewTopBtn';
+    const domActiveId = Array.from(tabs.querySelectorAll('.pi-admin-tab-btn.active')).map(b=>b.id)[0] || '';
+    const activeId = TOP_BUTTON_BY_PANEL[activeTopPanelId] || domActiveId || 'piFinanceOverviewTopBtn';
     tabs.innerHTML='';
     items.forEach(([id,label,panel,refresh],idx)=>{
       const btn=document.createElement('button'); btn.type='button'; btn.id=id; btn.className='pi-admin-tab-btn'; btn.textContent=label;
       btn.onclick=()=>window.piFinanceGroupOpen(panel,btn,refresh);
-      if(id===activeId || (!$(activeId) && idx===0)) btn.classList.add('active');
+      if(id===activeId || (!activeId && idx===0)) btn.classList.add('active');
       tabs.appendChild(btn);
     });
   }
@@ -371,6 +380,7 @@
   }
   function bindLegacyToggle(){
     window.piFinanceGroupOpen = function(panelId, btn, refreshType){
+      activeTopPanelId = TOP_BUTTON_BY_PANEL[panelId] ? panelId : (activeTopPanelId || 'piTransactionsFinanceProPanel');
       organizeFinanceSection(false);
       const target=$(panelId); if(!target) return;
       TOP_IDS.forEach(id=>hide($(id)));
@@ -378,10 +388,9 @@
       const tabs=document.querySelector('#tab-transactions .pi-transactions-admin-toggles');
       if(tabs){
         tabs.querySelectorAll('.pi-admin-tab-btn').forEach(b=>b.classList.remove('active'));
-        const idMap={piTransactionsFinanceProPanel:'piFinanceOverviewTopBtn',piTransactionsOperationsPanel:'piFinanceOperationsTopBtn',piTenantMonthlyCollapse:'piTransactionsFixedSettlementsTopBtn',piFinanceFeeBreakdownsPanel:'piFinanceFeesTopBtn',piTransactionsHistoryGroupPanel:'piFinanceHistoryTopBtn'};
         // organizeFinanceSection() przebudowuje belkę, więc kliknięty przycisk może być już odpięty z DOM.
-        // Zawsze pobieramy aktualny przycisk po ID, a dopiero awaryjnie używamy btn.
-        const activeBtn=$(idMap[panelId]) || btn;
+        // Stan aktywnej zakładki trzymamy osobno i po każdej przebudowie wymuszamy dokładnie jeden aktywny przycisk.
+        const activeBtn=$(TOP_BUTTON_BY_PANEL[activeTopPanelId]) || btn;
         if(activeBtn) activeBtn.classList.add('active');
       }
       try{
@@ -391,7 +400,14 @@
         }
         if(refreshType==='fixedSettlements'){
           window.piTransactionTypesRefreshV160?.(); window.renderOwnerRentPanel?.();
-          setTimeout(()=>organizeFinanceSection(false),80);
+          setTimeout(()=>{
+            organizeFinanceSection(false);
+            const tabs=document.querySelector('#tab-transactions .pi-transactions-admin-toggles');
+            if(tabs){
+              tabs.querySelectorAll('.pi-admin-tab-btn').forEach(b=>b.classList.remove('active'));
+              $(TOP_BUTTON_BY_PANEL[activeTopPanelId])?.classList.add('active');
+            }
+          },80);
         }
         if(refreshType==='fees'){
           window.piRenderFeeBreakdowns?.({preferActive:true});
