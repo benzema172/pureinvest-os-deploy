@@ -1,8 +1,8 @@
 {
-  "version": "1.9.30",
-  "build": "2026-09-24-clean-stability-v1930",
-  "name": "PureInvest OS 1.9.30",
-  "note": "Clean Stability Rebuild: stable 1.9.21 runtime with Finance unification and compact transactions reapplied without auth/interaction recovery layers.",
+  "version": "1.9.33",
+  "build": "2026-09-24-dashboard-refresh-v1933",
+  "name": "PureInvest OS 1.9.33",
+  "note": "Dashboard Refresh: lighter command center, refined overview cards, arrears panel, action bar and recent transactions.",
   "buildDate": "2026-09-24",
   "date": "2026-09-24",
   "schema": "SQL_FINAL_SCHEMA_1_9_0.sql",
