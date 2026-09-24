@@ -52,7 +52,7 @@
     return '👤 '+(p.tenant_name || 'Brak najemcy')+' • '+(p.tenant_name ? 'Wynajęte' : 'Wolne')+(area>0 ? ' • 📐 '+area.toLocaleString('pl-PL')+' m²' : '');
   }
 
-  window.showWelcome = function(options={}){
+  window.showWelcome = function(){
     document.body.classList.add('authenticated');
     setScreen('welcome');
     hideLogin();
@@ -60,7 +60,7 @@
     $('welcomeScreen')?.classList.remove('hidden');
     document.body.classList.add('tab-dashboard-active');
     safeCall(window.piSyncParobekAuthVisibility);
-    if(!options.deferData) safeCall(window.loadPropertyTiles);
+    safeCall(window.loadPropertyTiles);
     if(!$('piRoleLabel')){
       const target = document.querySelector('#welcomeScreen h1, #welcomeScreen h2, .welcome-title, .brand');
       if(target){
@@ -90,8 +90,6 @@
       sessionStorage.removeItem('piTenantMultiSessionV551');
       sessionStorage.removeItem('piFriendSessionV1');
       sessionStorage.removeItem('piAuthHandoffV1919');
-      sessionStorage.removeItem('piLoginRedirectReasonV1925');
-      try{ localStorage.removeItem('piNavigationHandoffV1925'); }catch(_){ }
     }catch(_){ }
     try{ await dbClient()?.auth?.signOut?.(); }catch(_){ }
     try{ delete document.body.dataset.piFriendSandbox; document.body.classList.remove('pi-friend-sandbox-mode'); }catch(_){ }

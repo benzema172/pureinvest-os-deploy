@@ -634,6 +634,9 @@
       const res=await query;
       if(!res.error) return res;
       const msg=String(res.error.message || '');
+      if(table==='expenses' && /expenses_type_check/i.test(msg)){
+        throw new Error('Supabase ma nieaktualne ograniczenie expenses_type_check. Uruchom plik docs/SQL_HOTFIX_EXPENSES_TYPE_1_9_0.sql. Szczegóły: '+msg);
+      }
       if(settlementConstraintError(res.error)){
         const original=body.settlement_component;
         if(componentFallbackStage===0 && Object.prototype.hasOwnProperty.call(body,'settlement_component')){

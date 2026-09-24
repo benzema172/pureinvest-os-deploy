@@ -6,7 +6,7 @@
 <title>PureInvest OS</title>
 <meta name="robots" content="noindex,nofollow,noarchive" />
 <script>
-(()=>{try{localStorage.setItem('piReleaseBootstrap','2026-09-24-interaction-kernel-v1928');}catch(_){}})();
+(()=>{const build='2026-09-24-clean-stability-v1930',key='piReleaseBootstrap';try{if(localStorage.getItem(key)===build)return;localStorage.setItem(key,build);if(!('caches' in window))return;caches.keys().then(keys=>{const old=keys.filter(name=>name.startsWith('pureinvest-'));return Promise.all(old.map(name=>caches.delete(name))).then(()=>{if(old.length)location.reload();});}).catch(()=>null);}catch(_){}})();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8" integrity="sha384-z2hqtpr/vSDZ8zSjLOiNgnR/mpU799AD93s6rvkNJLI6Hl0YlKXEhDtREzNT749S" crossorigin="anonymous">
@@ -14,8 +14,8 @@
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/app.css?v=2026-09-24-interaction-kernel-v1928">
-<link rel="stylesheet" href="css/client-readiness.css?v=2026-09-24-interaction-kernel-v1928">
+<link rel="stylesheet" href="css/app.css?v=2026-09-24-clean-stability-v1930">
+<link rel="stylesheet" href="css/client-readiness.css?v=2026-09-24-clean-stability-v1930">
 <meta name="theme-color" content="#121212">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
@@ -912,7 +912,7 @@
       </div>
       <div class="pi-diagnostics-toolbar card">
         <div>
-          <div class="card-title" data-app-version>PureInvest OS 1.9.28</div>
+          <div class="card-title" data-app-version>PureInvest OS 1.9.30</div>
         </div>
         <div class="pi-diagnostics-actions">
           <button type="button" onclick="piRunDiagnosticsV770(true)">Uruchom diagnostykę</button>
@@ -1048,15 +1048,15 @@ window.PI_CONFIG = Object.assign({
   SUPABASE_PUBLISHABLE_KEY:'sb_publishable_v-9m11onzicV5-rWwZYwPw_57l7Q91-'
 }, window.PI_CONFIG || {});
 </script>
-<script src="js/version.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/config.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/security-ui.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/diagnostics.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/friend-sandbox.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/friend-login-bridge.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/bootstrap.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/cache-guard.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/app-core.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/version.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/config.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/security-ui.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/diagnostics.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/friend-sandbox.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/friend-login-bridge.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/bootstrap.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/cache-guard.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/app-core.js?v=2026-09-24-clean-stability-v1930"></script>
 
 <nav id="mobileBottomNav" class="mobile-bottom-nav">
   <button type="button" onclick="switchTab('dashboard', document.querySelector('.nav-item[onclick*=dashboard]'))">⌂<span>Start</span></button>
@@ -1068,37 +1068,37 @@ window.PI_CONFIG = Object.assign({
 
 <div class="pureinvest-author-footer" aria-label="PureInvest">PureInvest</div>
 
-<script src="js/modules/mobile-drawer.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/mobile-drawer.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/app-state.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/app-state.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/properties.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/properties.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/ui-helpers.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/ui-helpers.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/library-base.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/library-base.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/filtering.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/payment-period.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/filtering.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/payment-period.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/unified-settlement-engine.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/finance-widgets.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/unified-settlement-engine.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/finance-widgets.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/charts.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/charts.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/reports.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/reports.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/documents.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/documents.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/ocr.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/ocr.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/navigation.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/navigation.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/parobek-ai-mini.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/parobek-ai-mini.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/auth-guard.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/auth-guard.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/mobile-auth.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/mobile-auth.js?v=2026-09-24-clean-stability-v1930"></script>
 
 <div id="tenantPortalScreen" class="pi-tenant-screen hidden">
   <div class="pi-tenant-shell">
@@ -1453,55 +1453,55 @@ window.PI_CONFIG = Object.assign({
   setTimeout(render,300);
 })();
 </script>
-<script src="js/modules/tenant-portal.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/tenant-portal.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/tenant-manager.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/tenant-manager.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/access-security.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/access-roles.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/access-edit.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/access-security.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/access-roles.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/access-edit.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/roi-tax.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/roi-tax.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/library-pro.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/library-pro.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/gmail-costs.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/gmail-costs.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/version-state.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/version-state.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/property-save.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/properties-manager.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/property-save.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/properties-manager.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/panel-core.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/panel-core.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/finance-core.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/transactions.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/finance-dashboard-metrics.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/dashboard-core.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/owner-compatibility.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/storage-hardening.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/release-closure.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/tickets.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/final-qa-ui.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/os-beta.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/dashboard-stability.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/remove-property-doc-badge.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/finance-core.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/transactions.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/finance-dashboard-metrics.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/dashboard-core.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/owner-compatibility.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/storage-hardening.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/release-closure.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/tickets.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/final-qa-ui.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/os-beta.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/dashboard-stability.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/remove-property-doc-badge.js?v=2026-09-24-clean-stability-v1930"></script>
 
-<script src="js/modules/os11-stability-diagnostics.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/os15-stabilization.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/production-hardening.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/transaction-type-manager.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/tax-policy-owner-rent.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/arrears-engine.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/fee-meter-bridge.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/fee-breakdowns.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/fee-accordion.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/navigation-guard.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/finance-section-reorg.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/rent-autopilot.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/startup.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/tenancy-sync.js?v=2026-09-24-interaction-kernel-v1928"></script>
-<script src="js/modules/a11y-final.js?v=2026-09-24-interaction-kernel-v1928"></script>
+<script src="js/modules/os11-stability-diagnostics.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/os15-stabilization.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/production-hardening.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/transaction-type-manager.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/tax-policy-owner-rent.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/arrears-engine.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/fee-meter-bridge.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/fee-breakdowns.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/fee-accordion.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/navigation-guard.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/finance-section-reorg.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/rent-autopilot.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/startup.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/tenancy-sync.js?v=2026-09-24-clean-stability-v1930"></script>
+<script src="js/modules/a11y-final.js?v=2026-09-24-clean-stability-v1930"></script>
 <script id="tenantHistoryBridgeV182">
 (function(){
   const callHistory=data=>{
@@ -1552,7 +1552,6 @@ window.PI_CONFIG = Object.assign({
   },500);
 })();
 </script>
-  <script src="js/modules/interaction-recovery.js?v=2026-09-24-interaction-kernel-v1928"></script>
   <script src="assets/js/pi-transactions-compact-1.9.22.js" defer data-pi-patch="1.9.22-transactions"></script>
 </body>
 </html>

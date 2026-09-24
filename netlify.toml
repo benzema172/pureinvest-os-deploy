@@ -1,9 +1,7 @@
 [build]
-  command = "node -e \"console.log('Using prebuilt PureInvest OS deployment artifact')\""
+  command = "node -e \"console.log('Using prebuilt PureInvest OS 1.9.30 deployment artifact')\""
   publish = "dist"
   functions = "netlify/functions"
 
-[[redirects]]
-  from = "/app"
-  to = "/app.html"
-  status = 200
+[functions]
+  node_bundler = "esbuild"

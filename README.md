@@ -1,5 +1,5 @@
 # PureInvest OS — deployment artifact
 
-Production deployment repository for **PureInvest OS 1.9.27**.
+Production deployment repository for **PureInvest OS 1.9.30**.
 
-Source code remains in the private repository. This public repository contains only the prebuilt Netlify deployment artifact and serverless functions required for production.
+This repository contains the prebuilt Netlify artifact and production serverless functions. The full source remains in the private `benzema172/pureinvest-os` repository.

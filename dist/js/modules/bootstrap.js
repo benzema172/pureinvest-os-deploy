@@ -15,7 +15,7 @@ if(!window.supabase || typeof window.supabase.createClient !== 'function'){
         select(){ return this; }, order(){ return Promise.resolve({data:[], error:{message:'Brak biblioteki Supabase CDN.'}}); }, eq(){ return this; }, neq(){ return this; }, gte(){ return this; }, gt(){ return this; }, lte(){ return this; }, lt(){ return this; }, in(){ return this; }, is(){ return this; }, limit(){ return this; }, range(){ return this; }, insert(){ return this; }, update(){ return this; }, upsert(){ return this; }, delete(){ return this; }, maybeSingle(){ return Promise.resolve({data:null, error:{message:'Brak biblioteki Supabase CDN.'}}); }, single(){ return Promise.resolve({data:null, error:{message:'Brak biblioteki Supabase CDN.'}}); }, then(resolve,reject){ return Promise.resolve({data:[], error:{message:'Brak biblioteki Supabase CDN.'}}).then(resolve,reject); }
       };
       return {
-        auth:{ getSession:async()=>({data:{session:null},error:null}), getUser:async()=>({data:{user:null},error:null}), signInWithPassword:async()=>({data:null,error:{message:'Brak biblioteki Supabase CDN.'}}), setSession:async()=>({data:{session:null},error:{message:'Brak biblioteki Supabase CDN.'}}), signOut:async()=>({error:null}) },
+        auth:{ getSession:async()=>({data:{session:null},error:null}), getUser:async()=>({data:{user:null},error:null}), signInWithPassword:async()=>({data:null,error:{message:'Brak biblioteki Supabase CDN.'}}), signOut:async()=>({error:null}) },
         from(){ return Object.assign({}, emptyQuery); },
         storage:{ from(){ return { upload:async()=>({data:null,error:{message:'Brak biblioteki Supabase CDN.'}}), remove:async()=>({data:null,error:{message:'Brak biblioteki Supabase CDN.'}}), getPublicUrl:()=>({data:{publicUrl:'#'}}) }; } }
       };
@@ -29,43 +29,6 @@ let db = supabase.createClient(
 );
 window.db = db;
 window.piDb = db;
-const PI_NAV_HANDOFF_KEY='piNavigationHandoffV1925';
-async function piRestoreNavigationHandoff(){
-  let handoff=null;
-  try{ handoff=JSON.parse(localStorage.getItem(PI_NAV_HANDOFF_KEY) || 'null'); }catch(_){ }
-  if(!handoff) return false;
-  const age=Date.now()-Number(handoff.createdAt || 0);
-  if(!Number.isFinite(age) || age<0 || age>90000){
-    try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ }
-    return false;
-  }
-  try{
-    if(handoff.kind==='friend' && handoff.payload){
-      sessionStorage.setItem('piFriendSessionV1',JSON.stringify(handoff.payload));
-      try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ }
-      return true;
-    }
-    if(handoff.kind==='owner' && handoff.payload){
-      sessionStorage.setItem('piOwnerSessionV570',JSON.stringify(handoff.payload));
-      try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ }
-      return true;
-    }
-    if(handoff.kind==='tenant' && handoff.payload){
-      sessionStorage.setItem('piTenantSessionV54',JSON.stringify(handoff.payload));
-      try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ }
-      return true;
-    }
-    if(handoff.kind==='supabase' && handoff.payload?.access_token && handoff.payload?.refresh_token && typeof db?.auth?.setSession==='function'){
-      const result=await db.auth.setSession({access_token:handoff.payload.access_token,refresh_token:handoff.payload.refresh_token});
-      const restored=!!result?.data?.session && !result?.error;
-      if(restored){ try{ localStorage.removeItem(PI_NAV_HANDOFF_KEY); }catch(_){ } }
-      return restored;
-    }
-  }catch(error){
-    console.warn('PureInvest: nie udało się odtworzyć sesji po przejściu do aplikacji.',error?.message || error);
-  }
-  return false;
-}
 function piIsLiveTx(row){ return !!row && row.is_deleted !== true && !row.deleted_at; }
 function piLiveTxRows(rows){ return (rows || []).filter(piIsLiveTx); }
 
@@ -513,7 +476,6 @@ async function piStartupSupabaseSession(){
 }
 
 async function checkSession(){
-  try{ await piRestoreNavigationHandoff(); }catch(_){ }
   const storedFriendSessionV1 = sessionStorage.getItem('piFriendSessionV1');
   if(storedFriendSessionV1 && typeof window.piEnableFriendSandbox === 'function'){
     try{
@@ -574,21 +536,14 @@ async function checkSession(){
 
     if(data && data.session){
       document.body.classList.add("authenticated");
+      await piLoadRoleContext();
       if(login){
         login.classList.add("hidden");
         login.style.display = "none";
         login.style.visibility = "hidden";
         login.style.pointerEvents = "none";
       }
-      // 1.9.24: pokaż powłokę natychmiast. Pobranie roli/danych nie może blokować całego UI po logowaniu.
-      showWelcome({deferData:true});
-      try{
-        await piLoadRoleContext();
-      }catch(roleError){
-        console.warn('PureInvest: kontekst roli nie załadował się podczas startu.', roleError);
-      }
-      try{ piApplyRoleUi(); }catch(_){ }
-      try{ if(typeof loadPropertyTiles === 'function') loadPropertyTiles(); }catch(_){ }
+      showWelcome();
       return;
     }
   }catch(e){
@@ -598,13 +553,6 @@ async function checkSession(){
   document.body.classList.remove("authenticated", "in-app", "welcome-mode");
   if(app) app.classList.add("hidden");
   if(welcome) welcome.classList.add("hidden");
-  // 1.9.25: app.html nie ma już udawać drugiego ekranu logowania.
-  // Brak sesji oznacza powrót do jedynego właściwego formularza na stronie głównej.
-  if(/\/app(?:\.html)?$/.test(location.pathname)){
-    try{ sessionStorage.setItem('piLoginRedirectReasonV1925','missing-session'); }catch(_){ }
-    location.replace('/');
-    return;
-  }
   if(login){
     login.style.display = "";
     login.style.visibility = "";

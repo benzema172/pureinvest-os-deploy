@@ -148,24 +148,28 @@
     if (!root) return false;
 
     apply(root);
-    const observer = new MutationObserver(() => apply(root));
+    let queued = false;
+    const observer = new MutationObserver((mutations) => {
+      if (queued) return;
+      const hasAddedElements = mutations.some(mutation =>
+        Array.from(mutation.addedNodes || []).some(node => node && node.nodeType === 1)
+      );
+      if (!hasAddedElements) return;
+      queued = true;
+      setTimeout(() => {
+        queued = false;
+        observer.disconnect();
+        try { apply(root); } finally { observer.observe(root, { childList: true, subtree: true }); }
+      }, 40);
+    });
     observer.observe(root, { childList: true, subtree: true });
     return true;
   }
 
-  function bootWhenIdle() {
-    const run = () => {
-      if (!start()) {
-        const wait = new MutationObserver(() => {
-          if (start()) wait.disconnect();
-        });
-        wait.observe(document.documentElement, { childList: true, subtree: true });
-      }
-    };
-    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 600));
-    idle(run, { timeout: 1500 });
+  if (!start()) {
+    const wait = new MutationObserver(() => {
+      if (start()) wait.disconnect();
+    });
+    wait.observe(document.documentElement, { childList: true, subtree: true });
   }
-
-  if (document.readyState === 'complete') bootWhenIdle();
-  else window.addEventListener('load', bootWhenIdle, { once: true });
 })();

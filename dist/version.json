@@ -1,8 +1,8 @@
 {
-  "version": "1.9.28",
-  "build": "2026-09-24-interaction-kernel-v1928",
-  "name": "PureInvest OS 1.9.28",
-  "note": "Interaction Kernel: niezależna obsługa kliknięć i nawigacji, automatyczne wykrywanie oraz neutralizacja warstw blokujących interakcję po zalogowaniu.",
+  "version": "1.9.30",
+  "build": "2026-09-24-clean-stability-v1930",
+  "name": "PureInvest OS 1.9.30",
+  "note": "Clean Stability Rebuild: stable 1.9.21 runtime with Finance unification and compact transactions reapplied without auth/interaction recovery layers.",
   "buildDate": "2026-09-24",
   "date": "2026-09-24",
   "schema": "SQL_FINAL_SCHEMA_1_9_0.sql",

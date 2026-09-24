@@ -23,16 +23,13 @@
   Cache-Control: no-cache, must-revalidate, max-age=0
 
 /js/*
-  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Cache-Control: public, max-age=300, must-revalidate
 
 /css/*
-  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Cache-Control: public, max-age=300, must-revalidate
 
 /icons/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 /version.json
-  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
-
-/assets/*
   Cache-Control: no-store, no-cache, must-revalidate, max-age=0

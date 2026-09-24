@@ -1,6 +1,6 @@
 (function(){
-  if(window.__PI_FINANCE_REORG_1924__) return;
-  window.__PI_FINANCE_REORG_1924__ = true;
+  if(window.__PI_FINANCE_REORG_1730__) return;
+  window.__PI_FINANCE_REORG_1730__ = true;
   const $ = id => document.getElementById(id);
   const TOP_IDS = ['piTransactionsFinanceProPanel','piTransactionsOperationsPanel','piTenantMonthlyCollapse','piFinanceFeeBreakdownsPanel','piTransactionsHistoryGroupPanel'];
   const INNER_OPS = ['piFinanceQuickOpsPanel','piTransactionsMailPanel'];
@@ -438,7 +438,7 @@
   }
   function bindLegacyRoutes(){
     const original=window.switchTab;
-    if(typeof original!=='function' || original.__piFinanceUnified1924) return;
+    if(typeof original!=='function' || original.__piFinanceUnified1923) return;
     const wrapped=function(tab,navEl){
       const legacyPortfolio=tab==='portfolio';
       const legacyFees=tab==='fee-breakdowns';
@@ -446,25 +446,19 @@
         const financeNav=document.querySelector('.nav-item[onclick*=transactions]') || navEl;
         const out=original.call(this,'transactions',financeNav);
         setTimeout(()=>{
-          try{ organizeFinanceSection(false); }catch(e){ console.warn('[Finance reorg]', e); }
           if(legacyFees) window.piFinanceGroupOpen?.('piFinanceFeeBreakdownsPanel',$('piFinanceFeesTopBtn'),'fees');
           else { window.piFinanceGroupOpen?.('piTransactionsFinanceProPanel',$('piFinanceOverviewTopBtn'),'financePro'); window.renderPortfolio?.(); }
         },40);
         return out;
       }
-      const out=original.apply(this,arguments);
-      if(tab==='transactions'){
-        setTimeout(()=>{ try{ organizeFinanceSection(true); }catch(e){ console.warn('[Finance reorg]', e); } },0);
-      }
-      return out;
+      return original.apply(this,arguments);
     };
-    wrapped.__piFinanceUnified1924=true;
+    wrapped.__piFinanceUnified1923=true;
     window.switchTab=wrapped;
   }
   window.piFinanceReorganize = organizeFinanceSection;
   document.addEventListener('DOMContentLoaded',()=>{
     bindLegacyRoutes();
-    // 1.9.24: startup ma pozostać lekki. Pełną reorganizację wykonujemy dopiero przy wejściu w Finanse.
     try{ removeLegacyNav(); }catch(e){ console.warn('[Finance nav cleanup]', e); }
   });
 })();
